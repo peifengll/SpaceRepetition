@@ -1,0 +1,84 @@
+syntax = "v1"
+
+import "user.api"
+
+info(
+    title: "user"
+    desc: "跟用户表有关的操作都直接放这里"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+
+
+type (
+    // 章节的名字，id
+    Sectioninfo {
+        Id int `json:"id"`
+        Name string `json:"name"`
+    }
+    Knowledgeinfo {
+        Id int `json:"id"`
+        Font string `json:"font"`
+        Back string `json:"back"`
+        Typeof int `json:"typeof"` // 属于哪种卡片类型，默认为0，就是正反面问题答案卡片形式
+        Sectioninfo
+    }
+        //    打开一个牌组，获取所有信息，以map的形式返回
+    DeckAllReq {
+        //        UserId int `json:"userid"`
+        DeckId int `json:"deckid"`
+    }
+    DeckAllResp {
+        CommonResply
+        //     string就是section，knowledgeinfo自然不用说
+        Data map[string][]Knowledgeinfo `json:"data"`
+    }
+
+    SectionAddReq {
+        DeckId int `json:"deckId"`
+        Name string `json:"name"`
+    }
+
+    CardLearningReq {
+        DeckId int `json:"id"` //     deckid
+    }
+    CardLearningResp {
+        CommonResply
+        Data []Knowledgeinfo `json:"data"` //在学的所有
+    }
+
+        //     把这批都加入调度
+    CardToLearningReq {
+        IdList []int `json:"idlist"` //     ldlist
+    }
+)
+
+// 主要是牌组打开之后了
+@server(
+    prefix: decks
+    group: deckopen
+    jwt : Auth
+)
+service space1 {
+    @doc "打开一个deck，展示所有玩意儿"
+    @handler openDeck
+    get /open (DeckAllReq) returns (DeckAllResp)
+
+    @doc "为这一个deck新增加一个section"
+    @handler addSection
+    post /addsection (SectionAddReq) returns (CommonResply)
+
+    @doc "deck all onlearn"
+    @handler cardOnLearning
+    get /cardOnLearning (CardLearningReq) returns (CardLearningResp)
+
+    @doc "deck all no onlearn  还没开始学的"
+    @handler cardNoLearning
+    get /cardNoLearning (CardLearningReq) returns (CardLearningResp)
+
+    @doc "把这批量没学的卡片，加入调度"
+    @handler addToReview
+    put /addtoreview (CardToLearningReq) returns (CommonResply)
+}

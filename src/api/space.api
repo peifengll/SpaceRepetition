@@ -1,0 +1,13 @@
+syntax = "v1"
+
+import "apis/user.api"
+import "apis/deck.api"
+import "apis/card.api"
+import "apis/knowledge.api"
+info(
+	title: "间隔重复学习系统总的api"
+	desc: "all"
+	author: "peifeng"
+	email: "type email here"
+	version: "type version here"
+)

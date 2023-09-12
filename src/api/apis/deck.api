@@ -1,0 +1,79 @@
+syntax = "v1"
+
+import "user.api"
+info(
+    title: "type title here"
+    desc: "type desc here"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+
+// 从现在开始是，主要是，文件夹，decks
+type (
+    // 文件相关
+    Floderinfo {
+        Id int `json:"id"`
+        Name string `json:"name"`
+        DeckNum int `json:"decknum"`
+    }
+        //     这个用来查询这个人所有的floder信息,目前就放一个userid吧
+    FloderAllReq {
+        //     token里有，所以什么都不需要
+        //        Userid int `json:"userid"`
+    }
+    FloderAllResp {
+        Data []Floderinfo `json:"data"`
+    }
+        // 查询关于这个文件夹的相关信息
+    FloderReq {
+        Id int `json:"id"`
+        //        Name string `json:"Name"`
+    }
+
+    FloderResp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        //     查询出来是一个deckinfo列表
+        Data []Deckinfo `json:"data"`
+    }
+    Deckinfo {
+        Id int `json:"id"`
+        Name string `json:"name"`
+        Cardnum int `json:"cardnum"`
+        Update int `json:"update"`
+    }
+
+    FloderAddReq {
+        Name string `json:"name"`
+    }
+
+    DeckAddReq {
+        FloderID int `json:"floderid"`
+        Name string `json:"name"`
+    }
+)
+
+// 这边主要是牌组获取相关的
+@server(
+    prefix: decks
+    group: decks
+    jwt : Auth
+)
+service space1 {
+    @doc(
+        summary : "获取所有文件夹"
+    )
+    @handler GetAllFloder
+    get /allfloder (FloderAllReq) returns (FloderAllResp)
+
+    @handler GetFloder
+    get /floderdetail (FloderReq) returns (FloderResp)
+
+    @handler AddDeck
+    post /adddeck (DeckAddReq) returns (CommonResply)
+
+    @handler AddFloder
+    post /addfloder (FloderAddReq) returns (CommonResply)
+}

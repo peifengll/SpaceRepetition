@@ -1,1 +1,13 @@
-hello world!
+# api文件配置
+```go
+Name: space1
+Host: 0.0.0.0
+Port: 8888
+
+Auth:
+  AccessSecret: peifengll
+  AccessExpire: 6000
+
+DataSourceName: root:123456@(118.25.23.154:8086)/SpaceRe?charset=utf8
+```
+

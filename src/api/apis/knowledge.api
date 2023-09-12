@@ -1,0 +1,83 @@
+syntax = "v1"
+import "user.api"
+
+info(
+    title: "type title here"
+    desc: "type desc here"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+
+// 对一张卡片的操作
+type (
+    KnowledgeInfo {
+        Font string `json:"font"`
+        OriginFont string `json:"originfont"`
+        Back string `json:"back"`
+        OnLearning bool `json:"onlearning"`
+        Typeof int `json:"typeof"`
+        DeckId uint `json:"deckid"`
+        Skilled float64 `json:"skilled"`
+        SectionId int `json:"sectionId"`
+    }
+
+    KnowledgeAddReq {
+        Font string `json:"font"`
+        Back string `json:"back"`
+        DeckId uint `json:"deckid"`
+        SectionId int `json:"sectionId"`
+    }
+    KnowledgeAddResp {
+        CommonResply
+    }
+
+    KnowledgeDelReq {
+        Id int `json:"id"`
+    }
+    KnowledgeDelResp {
+        CommonResply
+    }
+
+        // 请求来的信息，
+        //     只要知道正在复习的是哪个，其他信息就都晓得了，
+    ReviewReq {
+        KnowledgeId uint `json:"knowledgeId"`
+        Op int `json:"op"` //操作，简单、困难、忘记之类
+    }
+        //     从前端，删除原来那条，加入新的这条（如果还要复习的话）
+    ReviewResp {
+        CommonResply
+        Data KnowledgeInfo `json:"data"`
+    }
+    ReviewingListResp {
+        CommonResply
+        Data []KnowledgeInfo `json:"data"`
+    }
+)
+
+@server(
+    jwt: Auth
+    group: knowledge
+    prefix : decks
+)
+service space1 {
+    @doc "新增加一个知识点"
+    @handler addknowledge
+    post /addknowledge (KnowledgeAddReq) returns (KnowledgeAddResp)
+
+    @doc "删除一个"
+    @handler deleteKnowledge
+    delete /deleteknowledge (KnowledgeDelReq) returns (KnowledgeDelResp)
+
+
+    // 开始复习，
+    @doc "得到今天要复习的所有资料"
+    @handler getReviewingList
+    get /getReviewingList returns (ReviewingListResp)
+
+    @doc "拿到op进行调度，调度完成 还要复习就返回新的卡片"
+    @handler review
+    post /review (ReviewReq) returns (ReviewResp)
+}

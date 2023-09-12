@@ -1,0 +1,65 @@
+syntax = "v1"
+
+info(
+    title: "type title here"
+    desc: "type desc here"
+    author: "type author here"
+    email: "type email here"
+    version: "type version here"
+)
+
+
+// 下边这一截是跟用户注册信息有关
+type (
+    Userinfo {
+        Gender int `json:"gender"` //性别
+        Age int `json:"age"`       //年龄
+        HeadUrl string `json:"head_url"`
+        Email string `json:"email"`
+        UserName string `json:"username"`
+        Introduction string `json:"introduction"`
+        LearnNumOneDay int `json:"learnnumoneday"`
+    }
+    RegisterReq {
+        UserName string `json:"username"` // 用户名
+        PassWord string `json:"password"` // 用户密码，MD5加密
+        Gender int `json:"gender"`        // 用户性别：0男，1女，2保密
+        Age int `json:"age"`
+        Email string `json:"email"`       // 用户邮箱
+    }
+    CommonResply {
+        Code int `json:"code"`
+        Message string `json:"message"`
+    }
+
+    LoginReq {
+        UserName string `json:"username"` // 用户名
+        PassWord string `json:"password"` // 用户密码，MD5加密
+    }
+
+    LoginResply {
+        CommonResply
+        Data Userinfo `json:"data"`
+        AccessToken string `json:"accessToken"`
+        AccessExpire int64 `json:"accessExpire"`
+        RefreshAfter int64 `json:"refreshAfter"`
+    }
+)
+
+@server(
+    prefix : user
+    group : user
+)
+service space1 {
+    @doc(
+        summary: "用户注册"
+    )
+    @handler Register
+    post /register (RegisterReq) returns (CommonResply)
+
+    @doc(
+        summary: "用户登录"
+    )
+    @handler Login
+    get /login (LoginReq) returns (LoginResply)
+}
