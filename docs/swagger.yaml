@@ -1,14 +1,14 @@
 definitions:
-  v1.GetProfileResponse:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.GetProfileResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/v1.GetProfileResponseData'
+        $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.GetProfileResponseData'
       message:
         type: string
     type: object
-  v1.GetProfileResponseData:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.GetProfileResponseData:
     properties:
       nickname:
         example: alan
@@ -16,7 +16,7 @@ definitions:
       userId:
         type: string
     type: object
-  v1.LoginRequest:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.LoginRequest:
     properties:
       email:
         example: 1234@gmail.com
@@ -28,21 +28,21 @@ definitions:
     - email
     - password
     type: object
-  v1.LoginResponse:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.LoginResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/v1.LoginResponseData'
+        $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.LoginResponseData'
       message:
         type: string
     type: object
-  v1.LoginResponseData:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.LoginResponseData:
     properties:
       accessToken:
         type: string
     type: object
-  v1.RegisterRequest:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.RegisterRequest:
     properties:
       email:
         example: 1234@gmail.com
@@ -54,7 +54,7 @@ definitions:
     - email
     - password
     type: object
-  v1.Response:
+  github_com_go-nunu_nunu-layout-advanced_api_v1.Response:
     properties:
       code:
         type: integer
@@ -86,14 +86,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1.LoginRequest'
+          $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.LoginResponse'
+            $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.LoginResponse'
       summary: 账号登录
       tags:
       - 用户模块
@@ -108,14 +108,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1.RegisterRequest'
+          $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.RegisterRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.Response'
+            $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.Response'
       summary: 用户注册
       tags:
       - 用户模块
@@ -129,7 +129,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.GetProfileResponse'
+            $ref: '#/definitions/github_com_go-nunu_nunu-layout-advanced_api_v1.GetProfileResponse'
       security:
       - Bearer: []
       summary: 获取用户信息

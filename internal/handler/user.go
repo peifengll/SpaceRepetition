@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	v1 "github.com/peifengll/SpaceRepetition/api/v1"
+	"github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
 	"go.uber.org/zap"
 	"net/http"
