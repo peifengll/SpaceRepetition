@@ -7,7 +7,9 @@
 package wire
 
 import (
+	"github.com/google/wire"
 	"github.com/peifengll/SpaceRepetition/internal/handler"
+	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
 	"github.com/peifengll/SpaceRepetition/internal/server"
 	"github.com/peifengll/SpaceRepetition/internal/service"
@@ -16,7 +18,6 @@ import (
 	"github.com/peifengll/SpaceRepetition/pkg/jwt"
 	"github.com/peifengll/SpaceRepetition/pkg/log"
 	"github.com/peifengll/SpaceRepetition/pkg/server/http"
-	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 
@@ -34,7 +35,11 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)
 	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, userHandler)
+	queryQuery := query.NewQuery(db)
+	floderRepository := repository.NewFloderRepository(repositoryRepository)
+	floderService := service.NewFloderService(queryQuery, serviceService, floderRepository)
+	floderHandler := handler.NewFloderHandler(handlerHandler, floderService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, userHandler, floderHandler)
 	job := server.NewJob(logger)
 	appApp := newApp(httpServer, job)
 	return appApp, func() {
@@ -43,11 +48,13 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService)
+var querySet = wire.NewSet(query.NewQuery)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler)
+var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewFloderService)
+
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler)
 
 var serverSet = wire.NewSet(server.NewHTTPServer, server.NewJob, server.NewTask)
 

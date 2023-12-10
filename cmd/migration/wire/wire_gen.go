@@ -7,11 +7,11 @@
 package wire
 
 import (
+	"github.com/google/wire"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
 	"github.com/peifengll/SpaceRepetition/internal/server"
 	"github.com/peifengll/SpaceRepetition/pkg/app"
 	"github.com/peifengll/SpaceRepetition/pkg/log"
-	"github.com/google/wire"
 	"github.com/spf13/viper"
 )
 

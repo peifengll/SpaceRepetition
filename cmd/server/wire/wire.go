@@ -6,6 +6,7 @@ package wire
 import (
 	"github.com/google/wire"
 	"github.com/peifengll/SpaceRepetition/internal/handler"
+	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
 	"github.com/peifengll/SpaceRepetition/internal/server"
 	"github.com/peifengll/SpaceRepetition/internal/service"
@@ -23,16 +24,23 @@ var repositorySet = wire.NewSet(
 	repository.NewRepository,
 	repository.NewTransaction,
 	repository.NewUserRepository,
+	repository.NewFloderRepository,
+)
+
+var querySet = wire.NewSet(
+	query.NewQuery,
 )
 
 var serviceSet = wire.NewSet(
 	service.NewService,
 	service.NewUserService,
+	service.NewFloderService,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewHandler,
 	handler.NewUserHandler,
+	handler.NewFloderHandler,
 )
 
 var serverSet = wire.NewSet(
@@ -52,6 +60,7 @@ func newApp(httpServer *http.Server, job *server.Job) *app.App {
 func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
 
 	panic(wire.Build(
+		querySet,
 		repositorySet,
 		serviceSet,
 		handlerSet,

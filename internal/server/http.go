@@ -19,6 +19,7 @@ func NewHTTPServer(
 	conf *viper.Viper,
 	jwt *jwt.JWT,
 	userHandler *handler.UserHandler,
+	floderHandler *handler.FloderHandler,
 ) *http.Server {
 	gin.SetMode(gin.DebugMode)
 	s := http.NewServer(
@@ -48,6 +49,7 @@ func NewHTTPServer(
 			":)": "Thank you for using nunu!",
 		})
 	})
+	s.GET("/floder", floderHandler.GetFloder)
 
 	v1 := s.Group("/v1")
 	{

@@ -33,3 +33,14 @@ docker:
 .PHONY: swag
 swag:
 	swag init  -g cmd/server/main.go -o ./docs --parseDependency
+
+
+gormgen:
+	cd internal/util/gorm_gen && go run gormgen.go
+
+gormgeninterface:
+	cd internal/util/gorm_gen && go run geninterface.go
+
+
+run:
+	go run ./cmd/server
