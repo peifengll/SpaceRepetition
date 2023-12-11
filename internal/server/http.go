@@ -21,7 +21,7 @@ func NewHTTPServer(
 	userHandler *handler.UserHandler,
 	floderHandler *handler.FloderHandler,
 ) *http.Server {
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServer(
 		gin.Default(),
 		logger,
@@ -60,7 +60,7 @@ func NewHTTPServer(
 			noAuthRouter.POST("/login", userHandler.Login)
 		}
 		// Non-strict permission routing group
-		noStrictAuthRouter := v1.Group("/").Use(middleware.NoStrictAuth(jwt, logger))
+		noStrictAuthRouter := v1.Group("/").Use(middleware.StrictAuth(jwt, logger))
 		{
 			noStrictAuthRouter.GET("/user", userHandler.GetProfile)
 		}

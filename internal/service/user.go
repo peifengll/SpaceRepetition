@@ -44,7 +44,7 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest) err
 		return err
 	}
 	user := &model.User{
-		UserId:   userId,
+		UserID:   userId,
 		Email:    req.Email,
 		Password: string(hashedPassword),
 	}
@@ -70,7 +70,7 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (string, 
 	if err != nil {
 		return "", err
 	}
-	token, err := s.jwt.GenToken(user.UserId, time.Now().Add(time.Hour*24*90))
+	token, err := s.jwt.GenToken(user.UserID, time.Now().Add(time.Hour*24*90))
 	if err != nil {
 		return "", err
 	}
@@ -85,7 +85,7 @@ func (s *userService) GetProfile(ctx context.Context, userId string) (*v1.GetPro
 	}
 
 	return &v1.GetProfileResponseData{
-		UserId:   user.UserId,
+		UserId:   user.UserID,
 		Nickname: user.Nickname,
 	}, nil
 }

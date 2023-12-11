@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type User struct {
+type fUser struct {
 	Id        uint   `gorm:"primarykey"`
 	UserId    string `gorm:"unique;not null"`
 	Nickname  string `gorm:"not null"`
@@ -16,6 +16,6 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-func (u *User) TableName() string {
+func (u *fUser) TableName() string {
 	return "users"
 }
