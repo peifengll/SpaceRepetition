@@ -13,7 +13,7 @@ func main() {
 		Mode:    gen.WithDefaultQuery | gen.WithoutContext | gen.WithQueryInterface,
 	})
 
-	g.ApplyBasic(model.Floder{})
+	g.ApplyBasic(model.Floder{}, model.Deck{}, model.Knowledge{})
 
 	g.ApplyInterface(func(gormgen.FloderRepositoryG) {}, model.Floder{})
 

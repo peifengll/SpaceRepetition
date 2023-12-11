@@ -20,7 +20,7 @@ type Section struct {
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:datetime(3)" json:"-"`
 	Deckid    int64          `gorm:"column:deckid;type:bigint" json:"deckid"`
 	Name      string         `gorm:"column:name;type:longtext" json:"name"`
-	UserID    int64          `gorm:"column:user_id;type:int;comment:属于哪一个用户" json:"userId"` // 属于哪一个用户
+	UserID    string         `gorm:"column:user_id;type:varchar(191);comment:属于哪一个用户" json:"userId"` // 属于哪一个用户
 }
 
 // TableName Section's table name

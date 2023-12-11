@@ -16,34 +16,44 @@ import (
 )
 
 var (
-	Q      = new(Query)
-	Floder *floder
+	Q         = new(Query)
+	Deck      *deck
+	Floder    *floder
+	Knowledge *knowledge
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Deck = &Q.Deck
 	Floder = &Q.Floder
+	Knowledge = &Q.Knowledge
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:     db,
-		Floder: newFloder(db, opts...),
+		db:        db,
+		Deck:      newDeck(db, opts...),
+		Floder:    newFloder(db, opts...),
+		Knowledge: newKnowledge(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Floder floder
+	Deck      deck
+	Floder    floder
+	Knowledge knowledge
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:     db,
-		Floder: q.Floder.clone(db),
+		db:        db,
+		Deck:      q.Deck.clone(db),
+		Floder:    q.Floder.clone(db),
+		Knowledge: q.Knowledge.clone(db),
 	}
 }
 
@@ -57,18 +67,24 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:     db,
-		Floder: q.Floder.replaceDB(db),
+		db:        db,
+		Deck:      q.Deck.replaceDB(db),
+		Floder:    q.Floder.replaceDB(db),
+		Knowledge: q.Knowledge.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Floder IFloderDo
+	Deck      IDeckDo
+	Floder    IFloderDo
+	Knowledge IKnowledgeDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Floder: q.Floder.WithContext(ctx),
+		Deck:      q.Deck.WithContext(ctx),
+		Floder:    q.Floder.WithContext(ctx),
+		Knowledge: q.Knowledge.WithContext(ctx),
 	}
 }
 

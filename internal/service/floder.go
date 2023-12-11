@@ -8,7 +8,7 @@ import (
 
 type FloderService interface {
 	GetFloder(id int64) (*model.Floder, error)
-	FindByUserId(UserID int64) ([]model.Floder, error)
+	FindByUserId(UserID string) ([]model.Floder, error)
 }
 
 func NewFloderService(que *query.Query, service *Service, floderRepository repository.FloderRepository) FloderService {
@@ -28,6 +28,6 @@ type floderService struct {
 func (s *floderService) GetFloder(id int64) (*model.Floder, error) {
 	return s.floderRepository.FirstById(id)
 }
-func (s *floderService) FindByUserId(UserID int64) ([]model.Floder, error) {
+func (s *floderService) FindByUserId(UserID string) ([]model.Floder, error) {
 	return s.query.Floder.FindByUserId(UserID)
 }

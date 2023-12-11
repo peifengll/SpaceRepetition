@@ -18,9 +18,9 @@ type Floder struct {
 	CreatedAt time.Time      `gorm:"column:created_at;comment:创建时间" json:"createdAt"`
 	UpdatedAt time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:datetime(3)" json:"-"`
-	Name      string         `gorm:"column:name;type:longtext;comment:文件夹的名字叫啥" json:"name"`  // 文件夹的名字叫啥
-	UserID    int64          `gorm:"column:user_id;type:int;comment:属于哪个用户" json:"userId"`    // 属于哪个用户
-	Decknum   int64          `gorm:"column:decknum;type:bigint;comment:有几个牌组" json:"decknum"` // 有几个牌组
+	Name      string         `gorm:"column:name;type:longtext;comment:文件夹的名字叫啥" json:"name"`        // 文件夹的名字叫啥
+	UserID    string         `gorm:"column:user_id;type:varchar(191);comment:属于哪个用户" json:"userId"` // 属于哪个用户
+	Decknum   int64          `gorm:"column:decknum;type:bigint;comment:有几个牌组" json:"decknum"`       // 有几个牌组
 }
 
 // TableName Floder's table name

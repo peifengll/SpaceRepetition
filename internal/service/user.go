@@ -4,6 +4,7 @@ import (
 	"context"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/model"
+	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -16,15 +17,18 @@ type UserService interface {
 	UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error
 }
 
-func NewUserService(service *Service, userRepo repository.UserRepository) UserService {
+func NewUserService(que *query.Query, service *Service, userRepo repository.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
-		Service:  service,
+		query:    que,
+
+		Service: service,
 	}
 }
 
 type userService struct {
 	userRepo repository.UserRepository
+	query    *query.Query
 	*Service
 }
 

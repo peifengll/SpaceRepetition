@@ -5,12 +5,12 @@ import (
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 type FloderHandler struct {
 	*Handler
 	floderService service.FloderService
+	deckService   service.DeckService
 }
 
 func NewFloderHandler(handler *Handler, floderService service.FloderService) *FloderHandler {
@@ -22,14 +22,35 @@ func NewFloderHandler(handler *Handler, floderService service.FloderService) *Fl
 
 func (h *FloderHandler) GetFloder(ctx *gin.Context) {
 	userid := ctx.Query("userid")
-	id, err := strconv.ParseInt(userid, 10, 64)
 	//log.Fatalf("useriddd: %s", userid)
-	if err != nil {
-		h.logger.Error("GetFloder", zap.Any("get userid", err))
-	}
-	floderlist, err := h.floderService.FindByUserId(id)
+	floderlist, err := h.floderService.FindByUserId(userid)
 	if err != nil {
 		h.logger.Error("GetFloder", zap.Any("FindByUserId", err))
 	}
-	v1.HandleSuccess(ctx, floderlist)
+	floderDeckResps := make([]v1.FloderDeckResp, len(floderlist))
+	for i := 0; i < len(floderlist); i++ {
+		decks, err := h.deckService.GetDecksByFloderId(floderlist[i].ID)
+		deckrs := make([]v1.DeckResp, len(decks))
+		for j := 0; j < len(decks); j++ {
+			deckrs[j] = v1.DeckResp{
+				ID:           decks[j].ID,
+				Name:         decks[j].Name,
+				Cardnum:      decks[j].Cardnum,
+				Learnnumber:  decks[j].Learnnumber,
+				Introduction: decks[j].Introduction,
+				Floderid:     decks[j].Floderid,
+			}
+		}
+
+		floderDeckResps[i] = v1.FloderDeckResp{
+			ID:      floderlist[i].ID,
+			Name:    floderlist[i].Name,
+			Decknum: floderlist[i].Decknum,
+			Decks:   deckrs,
+		}
+		if err != nil {
+			return
+		}
+	}
+	v1.HandleSuccess(ctx, floderDeckResps)
 }

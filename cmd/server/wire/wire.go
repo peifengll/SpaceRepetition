@@ -25,6 +25,10 @@ var repositorySet = wire.NewSet(
 	repository.NewTransaction,
 	repository.NewUserRepository,
 	repository.NewFloderRepository,
+	repository.NewDeckRepository,
+	repository.NewKnowledgeRepository,
+	repository.NewRecordRepository,
+	repository.NewSectionRepository,
 )
 
 var querySet = wire.NewSet(
@@ -35,12 +39,19 @@ var serviceSet = wire.NewSet(
 	service.NewService,
 	service.NewUserService,
 	service.NewFloderService,
+	service.NewDeckService,
+	service.NewKnowledgeService,
+	service.NewRecordService,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewHandler,
 	handler.NewUserHandler,
 	handler.NewFloderHandler,
+	handler.NewDeckHandler,
+	handler.NewKnowledgeHandler,
+	handler.NewRecordHandler,
+	handler.NewSectionHandler,
 )
 
 var serverSet = wire.NewSet(

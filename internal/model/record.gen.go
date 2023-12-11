@@ -30,7 +30,7 @@ type Record struct {
 	On            int64          `gorm:"column:On;type:tinyint(1);comment:是否被使用" json:"on"`      // 是否被使用
 	Lastop        int64          `gorm:"column:lastop;type:bigint;comment:上一次的选择" json:"lastop"` // 上一次的选择
 	LastReview    time.Time      `gorm:"column:LastReview;type:datetime(3)" json:"lastReview"`
-	UserID        int64          `gorm:"column:user_id;type:int;comment:属于哪一个用户" json:"userId"` // 属于哪一个用户
+	UserID        string         `gorm:"column:user_id;type:varchar(191);comment:属于哪一个用户" json:"userId"` // 属于哪一个用户
 }
 
 // TableName Record's table name

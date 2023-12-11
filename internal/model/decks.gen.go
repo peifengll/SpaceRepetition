@@ -23,7 +23,7 @@ type Deck struct {
 	Learnnumber  int64          `gorm:"column:learnnumber;type:bigint" json:"learnnumber"`
 	Introduction string         `gorm:"column:introduction;type:longtext" json:"introduction"`
 	Floderid     int64          `gorm:"column:floderid;type:bigint" json:"floderid"`
-	UserID       int64          `gorm:"column:user_id;type:int" json:"userId"`
+	UserID       string         `gorm:"column:user_id;type:varchar(191)" json:"userId"`
 }
 
 // TableName Deck's table name

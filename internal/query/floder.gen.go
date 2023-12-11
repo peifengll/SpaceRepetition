@@ -33,7 +33,7 @@ func newFloder(db *gorm.DB, opts ...gen.DOOption) floder {
 	_floder.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_floder.DeletedAt = field.NewField(tableName, "deleted_at")
 	_floder.Name = field.NewString(tableName, "name")
-	_floder.UserID = field.NewInt64(tableName, "user_id")
+	_floder.UserID = field.NewString(tableName, "user_id")
 	_floder.Decknum = field.NewInt64(tableName, "decknum")
 
 	_floder.fillFieldMap()
@@ -50,7 +50,7 @@ type floder struct {
 	UpdatedAt field.Time
 	DeletedAt field.Field
 	Name      field.String
-	UserID    field.Int64
+	UserID    field.String
 	Decknum   field.Int64
 
 	fieldMap map[string]field.Expr
@@ -73,7 +73,7 @@ func (f *floder) updateTableName(table string) *floder {
 	f.UpdatedAt = field.NewTime(table, "updated_at")
 	f.DeletedAt = field.NewField(table, "deleted_at")
 	f.Name = field.NewString(table, "name")
-	f.UserID = field.NewInt64(table, "user_id")
+	f.UserID = field.NewString(table, "user_id")
 	f.Decknum = field.NewInt64(table, "decknum")
 
 	f.fillFieldMap()
@@ -173,12 +173,12 @@ type IFloderDo interface {
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
 
-	FindByUserId(UserID int64) (result []model.Floder, err error)
+	FindByUserId(UserID string) (result []model.Floder, err error)
 	DelOneByID(id int64) (err error)
 }
 
 // sql(select * from @@table where user_id = @UserID)
-func (f floderDo) FindByUserId(UserID int64) (result []model.Floder, err error) {
+func (f floderDo) FindByUserId(UserID string) (result []model.Floder, err error) {
 	var params []interface{}
 
 	var generateSQL strings.Builder

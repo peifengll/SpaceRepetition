@@ -26,7 +26,7 @@ type Knowledge struct {
 	Deckid     int64          `gorm:"column:deckid;type:bigint unsigned" json:"deckid"`
 	Skilled    float64        `gorm:"column:skilled;type:double" json:"skilled"`
 	Sectionid  int64          `gorm:"column:sectionid;type:bigint" json:"sectionid"`
-	UserID     int64          `gorm:"column:user_id;type:int" json:"userId"`
+	UserID     string         `gorm:"column:user_id;type:varchar(191)" json:"userId"`
 }
 
 // TableName Knowledge's table name

@@ -36,10 +36,10 @@ swag:
 
 
 gormgen:
-	cd internal/util/gorm_gen && go run gormgen.go
+	cd internal/util/gorm_gen && go run gormgen.go && go run geninterface.go
 
-gormgeninterface:
-	cd internal/util/gorm_gen && go run geninterface.go
+#gormgeninterface:
+#	cd internal/util/gorm_gen && go run geninterface.go
 
 
 run:
