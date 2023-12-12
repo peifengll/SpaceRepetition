@@ -20,6 +20,10 @@ func NewHTTPServer(
 	jwt *jwt.JWT,
 	userHandler *handler.UserHandler,
 	floderHandler *handler.FloderHandler,
+	deckHandler *handler.DeckHandler,
+	knowledgeHandler *handler.KnowledgeHandler,
+	recordHandler *handler.RecordHandler,
+	sectionHandler *handler.SectionHandler,
 ) *http.Server {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServer(

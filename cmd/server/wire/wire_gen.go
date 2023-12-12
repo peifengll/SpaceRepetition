@@ -36,10 +36,22 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(queryQuery, serviceService, userRepository)
 	userHandler := handler.NewUserHandler(handlerHandler, userService)
+	deckRepository := repository.NewDeckRepository(repositoryRepository)
+	deckService := service.NewDeckService(queryQuery, serviceService, deckRepository)
 	floderRepository := repository.NewFloderRepository(repositoryRepository)
 	floderService := service.NewFloderService(queryQuery, serviceService, floderRepository)
-	floderHandler := handler.NewFloderHandler(handlerHandler, floderService)
-	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, userHandler, floderHandler)
+	floderHandler := handler.NewFloderHandler(handlerHandler, deckService, floderService)
+	deckHandler := handler.NewDeckHandler(handlerHandler, deckService)
+	knowledgeRepository := repository.NewKnowledgeRepository(repositoryRepository)
+	knowledgeService := service.NewKnowledgeService(queryQuery, serviceService, knowledgeRepository)
+	knowledgeHandler := handler.NewKnowledgeHandler(handlerHandler, knowledgeService)
+	recordRepository := repository.NewRecordRepository(repositoryRepository)
+	recordService := service.NewRecordService(queryQuery, serviceService, recordRepository)
+	recordHandler := handler.NewRecordHandler(handlerHandler, recordService)
+	sectionRepository := repository.NewSectionRepository(repositoryRepository)
+	sectionService := service.NewSectionService(queryQuery, serviceService, sectionRepository)
+	sectionHandler := handler.NewSectionHandler(handlerHandler, sectionService)
+	httpServer := server.NewHTTPServer(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler)
 	job := server.NewJob(logger)
 	appApp := newApp(httpServer, job)
 	return appApp, func() {
@@ -48,13 +60,13 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository, repository.NewDeckRepository, repository.NewKnowledgeRepository, repository.NewRecordRepository, repository.NewSectionRepository)
 
 var querySet = wire.NewSet(query.NewQuery)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewFloderService)
+var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewFloderService, service.NewDeckService, service.NewKnowledgeService, service.NewRecordService, service.NewSectionService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler, handler.NewDeckHandler, handler.NewKnowledgeHandler, handler.NewRecordHandler, handler.NewSectionHandler)
 
 var serverSet = wire.NewSet(server.NewHTTPServer, server.NewJob, server.NewTask)
 

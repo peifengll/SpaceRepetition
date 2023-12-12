@@ -42,6 +42,7 @@ var serviceSet = wire.NewSet(
 	service.NewDeckService,
 	service.NewKnowledgeService,
 	service.NewRecordService,
+	service.NewSectionService,
 )
 
 var handlerSet = wire.NewSet(

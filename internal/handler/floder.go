@@ -13,10 +13,11 @@ type FloderHandler struct {
 	deckService   service.DeckService
 }
 
-func NewFloderHandler(handler *Handler, floderService service.FloderService) *FloderHandler {
+func NewFloderHandler(handler *Handler, deckService service.DeckService, floderService service.FloderService) *FloderHandler {
 	return &FloderHandler{
 		Handler:       handler,
 		floderService: floderService,
+		deckService:   deckService,
 	}
 }
 
@@ -30,6 +31,9 @@ func (h *FloderHandler) GetFloder(ctx *gin.Context) {
 	floderDeckResps := make([]v1.FloderDeckResp, len(floderlist))
 	for i := 0; i < len(floderlist); i++ {
 		decks, err := h.deckService.GetDecksByFloderId(floderlist[i].ID)
+		if err != nil {
+			h.logger.Error("GetFloder", zap.Any("GetDecksByFloderId", err))
+		}
 		deckrs := make([]v1.DeckResp, len(decks))
 		for j := 0; j < len(decks); j++ {
 			deckrs[j] = v1.DeckResp{
