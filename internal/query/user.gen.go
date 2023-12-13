@@ -55,14 +55,14 @@ type user struct {
 	CreatedAt      field.Time
 	UpdatedAt      field.Time
 	DeletedAt      field.Field
-	Gender         field.Int64 // 性别
+	Gender         field.Int64
 	Age            field.Int64
 	Password       field.String
-	HeadURL        field.String // 头像
+	HeadURL        field.String
 	Email          field.String
-	Username       field.String // 登录的用户名
+	Username       field.String
 	Introduction   field.String
-	Learnnumoneday field.Int64 // 一天学多少
+	Learnnumoneday field.Int64
 	UserID         field.String
 	Nickname       field.String
 

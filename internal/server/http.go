@@ -50,10 +50,9 @@ func NewHTTPServer(
 	s.GET("/", func(ctx *gin.Context) {
 		logger.WithContext(ctx).Info("hello")
 		apiV1.HandleSuccess(ctx, map[string]interface{}{
-			":)": "Thank you for using nunu!",
+			":)": "This is SpaceRepetition!",
 		})
 	})
-	s.GET("/floder", floderHandler.GetFloder)
 
 	v1 := s.Group("/v1")
 	{
@@ -74,6 +73,39 @@ func NewHTTPServer(
 		{
 			strictAuthRouter.PUT("/user", userHandler.UpdateProfile)
 		}
+
+		decks := v1.Group("/decks").Use(middleware.StrictAuth(jwt, logger))
+		{
+			// 跟文件夹相关
+			decks.GET("/", floderHandler.GetFloder)
+			decks.POST("/floder", floderHandler.AddFloder)
+			decks.DELETE("/floder/:id", floderHandler.DeleteFloder)
+			decks.GET("/floder/:id", floderHandler.GetFloderById)
+			decks.PUT("/floder", floderHandler.UpdateFloder)
+
+			//	跟牌组
+			decks.POST("/deck", deckHandler.AddDeck)
+			decks.GET("/deck/:id", deckHandler.GetDeckById)
+			decks.PUT("/deck", deckHandler.UpdateDeck)
+			decks.DELETE("/deck/:id", deckHandler.DeleteDeck)
+
+			//	跟卡片
+			decks.POST("/card", knowledgeHandler.AddCard)
+			decks.GET("/card/:id", knowledgeHandler.GetCard)
+			decks.PUT("/card", knowledgeHandler.UpdateCard)
+			decks.DELETE("/card/:id", knowledgeHandler.DeleteCard)
+			decks.GET("/card/search:content", knowledgeHandler.SearchCards)
+			decks.PUT("/card/toreview", knowledgeHandler.ChooseToReview)
+		}
+
+		review := v1.Group("/review")
+		//.Use(middleware.StrictAuth(jwt, logger))
+		{
+			review.GET("/")
+			review.PUT("/option")
+			review.PUT("/card/cancel")
+		}
+
 	}
 
 	return s

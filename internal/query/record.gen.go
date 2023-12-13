@@ -58,8 +58,8 @@ type record struct {
 	CreatedAt     field.Time
 	UpdatedAt     field.Time
 	DeletedAt     field.Field
-	KnowledgeID   field.Int64 // 这张卡片跟哪一个知识点有关
-	Due           field.Time  // 到期时间，也就是该复习的日子
+	KnowledgeID   field.Int64
+	Due           field.Time
 	Stability     field.Float64
 	Difficulty    field.Float64
 	ElapsedDays   field.Int64
@@ -67,10 +67,10 @@ type record struct {
 	Reps          field.Int64
 	Lapses        field.Int64
 	State         field.Int64
-	On            field.Int64 // 是否被使用
-	Lastop        field.Int64 // 上一次的选择
+	On            field.Int64
+	Lastop        field.Int64
 	LastReview    field.Time
-	UserID        field.String // 属于哪一个用户
+	UserID        field.String
 
 	fieldMap map[string]field.Expr
 }

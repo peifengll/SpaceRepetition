@@ -50,7 +50,7 @@ type section struct {
 	DeletedAt field.Field
 	Deckid    field.Int64
 	Name      field.String
-	UserID    field.String // 属于哪一个用户
+	UserID    field.String
 
 	fieldMap map[string]field.Expr
 }

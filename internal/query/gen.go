@@ -20,6 +20,9 @@ var (
 	Deck      *deck
 	Floder    *floder
 	Knowledge *knowledge
+	Record    *record
+	Section   *section
+	User      *user
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
@@ -27,6 +30,9 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	Deck = &Q.Deck
 	Floder = &Q.Floder
 	Knowledge = &Q.Knowledge
+	Record = &Q.Record
+	Section = &Q.Section
+	User = &Q.User
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
@@ -35,6 +41,9 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		Deck:      newDeck(db, opts...),
 		Floder:    newFloder(db, opts...),
 		Knowledge: newKnowledge(db, opts...),
+		Record:    newRecord(db, opts...),
+		Section:   newSection(db, opts...),
+		User:      newUser(db, opts...),
 	}
 }
 
@@ -44,6 +53,9 @@ type Query struct {
 	Deck      deck
 	Floder    floder
 	Knowledge knowledge
+	Record    record
+	Section   section
+	User      user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -54,6 +66,9 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		Deck:      q.Deck.clone(db),
 		Floder:    q.Floder.clone(db),
 		Knowledge: q.Knowledge.clone(db),
+		Record:    q.Record.clone(db),
+		Section:   q.Section.clone(db),
+		User:      q.User.clone(db),
 	}
 }
 
@@ -71,6 +86,9 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		Deck:      q.Deck.replaceDB(db),
 		Floder:    q.Floder.replaceDB(db),
 		Knowledge: q.Knowledge.replaceDB(db),
+		Record:    q.Record.replaceDB(db),
+		Section:   q.Section.replaceDB(db),
+		User:      q.User.replaceDB(db),
 	}
 }
 
@@ -78,6 +96,9 @@ type queryCtx struct {
 	Deck      IDeckDo
 	Floder    IFloderDo
 	Knowledge IKnowledgeDo
+	Record    IRecordDo
+	Section   ISectionDo
+	User      IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
@@ -85,6 +106,9 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		Deck:      q.Deck.WithContext(ctx),
 		Floder:    q.Floder.WithContext(ctx),
 		Knowledge: q.Knowledge.WithContext(ctx),
+		Record:    q.Record.WithContext(ctx),
+		Section:   q.Section.WithContext(ctx),
+		User:      q.User.WithContext(ctx),
 	}
 }
 
