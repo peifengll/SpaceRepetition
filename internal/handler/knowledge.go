@@ -114,7 +114,7 @@ func (h *KnowledgeHandler) SearchCards(ctx *gin.Context) {
 		return
 	}
 	content := ctx.Param("content")
-	cards, err := h.knowledgeService.SearchCards(content)
+	cards, err := h.knowledgeService.SearchCards(content, userId)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
@@ -136,7 +136,7 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
-	err = h.knowledgeService.ChooseToReview(ids.Ids)
+	err = h.knowledgeService.ChooseToReview(ids.Ids, userId)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return

@@ -1,10 +1,14 @@
 package service
 
 import (
+	"fmt"
+	"github.com/open-spaced-repetition/go-fsrs"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
+	//"github.com/peifengll/SpaceRepetition/pkg/helper/fsrs"
+	"time"
 )
 
 type KnowledgeService interface {
@@ -13,8 +17,8 @@ type KnowledgeService interface {
 	GetKnowledgeById(id int64) (*v1.CardResp, error)
 	UpdateCard(v *v1.CardRequest) error
 	DeleteCard(id int64) error
-	SearchCards(content string) ([]*v1.CardResp, error)
-	ChooseToReview(ids []int) error
+	SearchCards(content string, userId string) ([]*v1.CardResp, error)
+	ChooseToReview(ids []int64, userId string) error
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
@@ -92,9 +96,12 @@ func (s *knowledgeService) DeleteCard(id int64) error {
 	return nil
 }
 
-func (s *knowledgeService) SearchCards(content string) ([]*v1.CardResp, error) {
-	// todo 详细的查询规则
-	knows, err := s.query.Knowledge.Where().Find()
+// 这个就默认是搜索这个用户所有的了
+func (s *knowledgeService) SearchCards(content string, userId string) ([]*v1.CardResp, error) {
+	// todo  待测试这个能不能用
+	// 直接插origin，查属于这个牌组的
+	con := fmt.Sprintf("%%%s%%", content)
+	knows, err := s.query.Knowledge.Where(s.query.Knowledge.UserID.Eq(userId), s.query.Knowledge.Originfont.Like(con)).Find()
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +122,46 @@ func (s *knowledgeService) SearchCards(content string) ([]*v1.CardResp, error) {
 	return cards, nil
 }
 
-func (s *knowledgeService) ChooseToReview(ids []int) error {
-	//	 todo  这里要用事务来做，全部都开始复习
-	panic("not implement")
+// 先获取id列表
+// 将所有的id对应的card的onlearn更新为在学习，
+// 向复习记录表中插入一些新的record，也就是用来进行复习调度用的数据，应开始复习的时间就设置为今天
+//
+// 对了，应该不需要用事务的方式去做...?因为只要加入了复习，其实也不影响，。。。。
+// 不对，还是要以事务的方式去做，因为 设计两个表，一个更新了，另一个却没更新，这是不得行的
+func (s *knowledgeService) ChooseToReview(ids []int64, userId string) error {
+	//	这里要用事务来做，全部都开始复习
+	q := s.query
+	q.Transaction(func(tx *query.Query) error {
+		// 第一步 更新为onlearning
+		_, err := tx.Knowledge.Where(tx.Knowledge.ID.In(ids...)).Update(tx.Knowledge.Onlearning, 1)
+		if err != nil {
+			return err
+		}
+		records := make([]*model.Record, len(ids))
+		for i := 0; i < len(ids); i++ {
+			//_, err := tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).Update(tx.Knowledge.Onlearning, 1)
+			// 第二步 增加记录到复习里边去
+			records[i] = &model.Record{
+				KnowledgeID:   ids[i],
+				Due:           time.Now(),
+				Stability:     0,
+				Difficulty:    0,
+				ElapsedDays:   0,
+				ScheduledDays: 0,
+				Reps:          0,
+				Lapses:        0,
+				State:         int64(fsrs.New),
+				On:            1,
+				LastReview:    time.Now(),
+				UserID:        userId,
+			}
+		}
+		err = tx.Record.Create(records...)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	return nil
 }

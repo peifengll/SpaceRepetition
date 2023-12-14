@@ -11,7 +11,9 @@ import (
 func TestExample(t *testing.T) {
 	p := DefaultParam()
 	p.W = Weights{1.14, 1.01, 5.44, 14.67, 5.3024, 1.5662, 1.2503, 0.0028, 1.5489, 0.1763, 0.9953, 2.7473, 0.0179, 0.3105, 0.3976, 0.0, 2.0902}
+	// 第一步，新建一个卡片
 	card := NewCard()
+	fmt.Printf("timeis %+v\n", card.Due)
 	now := time.Date(2022, 11, 29, 12, 30, 0, 0, time.UTC)
 	var ivlList []uint64
 	var stateList []State
