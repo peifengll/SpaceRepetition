@@ -144,3 +144,12 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 
 	v1.HandleSuccess(ctx, nil)
 }
+
+func (h *KnowledgeHandler) GetAllReview(ctx *gin.Context) {
+	userId := GetUserIdFromCtx(ctx)
+	if userId == "" {
+		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		return
+	}
+	h.knowledgeService.GetAllReview(userId)
+}

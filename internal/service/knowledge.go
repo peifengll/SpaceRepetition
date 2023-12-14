@@ -19,6 +19,7 @@ type KnowledgeService interface {
 	DeleteCard(id int64) error
 	SearchCards(content string, userId string) ([]*v1.CardResp, error)
 	ChooseToReview(ids []int64, userId string) error
+	GetAllReview(id string) ([]*v1.DeckCardReviewResp, error)
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
@@ -164,4 +165,11 @@ func (s *knowledgeService) ChooseToReview(ids []int64, userId string) error {
 		return nil
 	})
 	return nil
+}
+
+func (s *knowledgeService) GetAllReview(id string) ([]*v1.DeckCardReviewResp, error) {
+	q := s.query
+	q.Record.Where().Find()
+
+	panic("not implement")
 }

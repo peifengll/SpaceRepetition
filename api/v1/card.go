@@ -25,3 +25,10 @@ type CardRequest struct {
 type CardIdReq struct {
 	Ids []int64 `json:"ids"`
 }
+
+type CardReviewResp struct {
+	ID         int64  `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id"`
+	Font       string `gorm:"column:font;type:longtext" json:"font"`
+	Originfont string `gorm:"column:originfont;type:longtext" json:"originfont"`
+	Back       string `gorm:"column:back;type:longtext" json:"back"`
+}

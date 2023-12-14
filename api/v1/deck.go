@@ -22,3 +22,9 @@ type DeckCardResp struct {
 	Introduction string             `gorm:"column:introduction;type:longtext" json:"introduction"`
 	Sections     []*SectionCardResp `json:"sections"`
 }
+
+type DeckCardReviewResp struct {
+	ID    int64             `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id"`
+	Name  string            `gorm:"column:name;type:longtext" json:"name"`
+	Cards []*CardReviewResp `json:"cards"`
+}

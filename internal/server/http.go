@@ -102,11 +102,13 @@ func NewHTTPServer(
 			decks.PUT("/card/toreview", knowledgeHandler.ChooseToReview)
 		}
 
-		review := v1.Group("/review")
-		//.Use(middleware.StrictAuth(jwt, logger))
+		review := v1.Group("/review").Use(middleware.StrictAuth(jwt, logger))
 		{
-			review.GET("/")
+			// 这个人该复习的所有
+			review.GET("/", knowledgeHandler.GetAllReview)
+			// 一次复习操作
 			review.PUT("/option")
+			//取消一张卡片的复习调度
 			review.PUT("/card/cancel")
 		}
 
