@@ -103,6 +103,7 @@ func (h *KnowledgeHandler) DeleteCard(ctx *gin.Context) {
 		return
 	}
 	err = h.knowledgeService.DeleteCard(id)
+	v1.HandleSuccess(ctx, nil)
 }
 
 func (h *KnowledgeHandler) SearchCards(ctx *gin.Context) {

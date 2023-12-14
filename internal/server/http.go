@@ -89,12 +89,16 @@ func NewHTTPServer(
 			decks.PUT("/deck", deckHandler.UpdateDeck)
 			decks.DELETE("/deck/:id", deckHandler.DeleteDeck)
 
+			// 跟牌组里的章节
+			decks.POST("/deck/section", sectionHandler.AddSection)
+			decks.DELETE("/deck/section/:id", sectionHandler.DeleteSection)
+			decks.PUT("/deck/section", sectionHandler.UpdateSection)
 			//	跟卡片
 			decks.POST("/card", knowledgeHandler.AddCard)
 			decks.GET("/card/:id", knowledgeHandler.GetCard)
 			decks.PUT("/card", knowledgeHandler.UpdateCard)
 			decks.DELETE("/card/:id", knowledgeHandler.DeleteCard)
-			decks.GET("/card/search:content", knowledgeHandler.SearchCards)
+			decks.GET("/card/search/:content", knowledgeHandler.SearchCards)
 			decks.PUT("/card/toreview", knowledgeHandler.ChooseToReview)
 		}
 
