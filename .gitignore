@@ -1,5 +1,8 @@
+*
+# 暂时就不把这些上传到git
 storage
-.idea
+./space-repeat-font/
 *.log
 deploy/docker-compose/conf
 deploy/docker-compose/data
+*.zip

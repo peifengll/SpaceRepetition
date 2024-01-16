@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/cmd/server/wire"
 	"github.com/peifengll/SpaceRepetition/pkg/config"
 	"github.com/peifengll/SpaceRepetition/pkg/log"
@@ -39,6 +40,7 @@ func main() {
 	}
 	logger.Info("server start", zap.String("host", "http://127.0.0.1:"+conf.GetString("http.port")))
 	logger.Info("docs addr", zap.String("addr", fmt.Sprintf("http://127.0.0.1:%d/swagger/index.html", conf.GetInt("http.port"))))
+	fmt.Println(v1.Baoyou)
 	if err = app.Run(context.Background()); err != nil {
 		panic(err)
 	}
