@@ -1,6 +1,6 @@
 <!-- src\layout\AppLayout.vue -->
 <template>
-  <el-container >
+  <el-container>
     <el-container>
       <el-header>
         <AppHeader />

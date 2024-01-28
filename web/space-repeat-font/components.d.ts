@@ -44,5 +44,6 @@ declare module 'vue' {
     RobotSwitch: typeof import('./src/components/tabs/RobotSwitch.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Tinymce: typeof import('./src/components/Tinymce/Tinymce.vue')['default']
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <el-container class="layout-container-demo" style="height: 670px">
+  <el-container class="layout-container-demo" style="height: 670px;">
 
 
     <el-aside width="300px" style="border-right: 1px solid #bfbff4;"
@@ -436,7 +436,7 @@ const openDel = (id: number) => {
               type: 'success',
               message: '删除成功',
             })
-            getDeckAndAllDetail()                
+            getDeckAndAllDetail()
             // location.reload()
             return
           }
