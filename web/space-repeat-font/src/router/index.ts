@@ -25,6 +25,11 @@ const routes: RouteRecordRaw[] = [
                     title:"编辑页"
                 }
             },
+            {
+                path:'/review',
+                name:'review',
+                component:()=>import('@/pages/Review.vue')
+            },
         ]
     },
     {
@@ -47,7 +52,9 @@ const routes: RouteRecordRaw[] = [
         path:'/test',
         name:'test',
         component:()=>import('@/pages/TestNew.vue')
-    }
+    },
+
+
 ]
 
 const router = createRouter({
