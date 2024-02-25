@@ -240,7 +240,8 @@ const openAddSection = () => {
             message: `章节:${value}添加成功`,
           })
           console.log(res.data)
-          location.reload()
+          getDeckAndAllDetail()
+          // location.reload()
         }).catch((res) => {
           console.log(res)
           ElMessage({
