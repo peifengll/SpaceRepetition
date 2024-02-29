@@ -58,7 +58,7 @@ const open = () => {
         addFloder(value)
         ElMessage({
           type: 'success',
-          message: `文件夹子${value}添加成功`,
+          message: `文件夹${value}添加成功`,
         })
         location.reload();
       })

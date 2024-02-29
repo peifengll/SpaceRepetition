@@ -43,4 +43,9 @@ gormgen:
 
 
 run:
-	go run ./cmd/server
+ifeq ($(mode),p)
+	   go run ./cmd/server  -conf ./config/prod.yml
+else
+	   go run ./cmd/server
+endif
+

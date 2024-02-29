@@ -41,8 +41,8 @@ func TestUserRepository_Create(t *testing.T) {
 
 	ctx := context.Background()
 	user := &model.User{
-		Id:        1,
-		UserId:    "123",
+		ID:        1,
+		UserID:    "123",
 		Nickname:  "Test",
 		Password:  "password",
 		Email:     "test@example.com",
@@ -52,7 +52,7 @@ func TestUserRepository_Create(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectExec("INSERT INTO `users`").
-		WithArgs(user.UserId, user.Nickname, user.Password, user.Email, user.CreatedAt, user.UpdatedAt, user.DeletedAt, user.Id).
+		WithArgs(user.UserID, user.Nickname, user.Password, user.Email, user.CreatedAt, user.UpdatedAt, user.DeletedAt, user.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -67,8 +67,8 @@ func TestUserRepository_Update(t *testing.T) {
 
 	ctx := context.Background()
 	user := &model.User{
-		Id:        1,
-		UserId:    "123",
+		ID:        1,
+		UserID:    "123",
 		Nickname:  "Test",
 		Password:  "password",
 		Email:     "test@example.com",
@@ -99,7 +99,7 @@ func TestUserRepository_GetById(t *testing.T) {
 	user, err := userRepo.GetByID(ctx, userId)
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
-	assert.Equal(t, "123", user.UserId)
+	assert.Equal(t, "123", user.UserID)
 
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
