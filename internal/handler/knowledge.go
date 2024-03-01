@@ -151,5 +151,28 @@ func (h *KnowledgeHandler) GetAllReview(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
 		return
 	}
-	h.knowledgeService.GetAllReview(userId)
+	review, err := h.knowledgeService.GetAllReview(userId)
+	if err != nil {
+		return
+	}
+	v1.HandleSuccess(ctx, review)
+}
+
+func (h *KnowledgeHandler) ReviewOpt(ctx *gin.Context) {
+	userId := GetUserIdFromCtx(ctx)
+	if userId == "" {
+		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		return
+	}
+	var t v1.CardReviewOptReq
+	err := ctx.BindJSON(&t)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+	}
+	err = h.knowledgeService.ReviewOp(&t, userId)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, "操作成功")
 }

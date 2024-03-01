@@ -2,12 +2,12 @@ package service
 
 import (
 	"fmt"
-	"github.com/open-spaced-repetition/go-fsrs"
+	//"github.com/open-spaced-repetition/go-fsrs"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
-	//"github.com/peifengll/SpaceRepetition/pkg/helper/fsrs"
+	"github.com/peifengll/SpaceRepetition/pkg/helper/fsrs"
 	"time"
 )
 
@@ -20,6 +20,7 @@ type KnowledgeService interface {
 	SearchCards(content string, userId string) ([]*v1.CardResp, error)
 	ChooseToReview(ids []int64, userId string) error
 	GetAllReview(id string) ([]*v1.DeckCardReviewResp, error)
+	ReviewOp(t *v1.CardReviewOptReq, userid string) error
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
@@ -167,9 +168,99 @@ func (s *knowledgeService) ChooseToReview(ids []int64, userId string) error {
 	return nil
 }
 
-func (s *knowledgeService) GetAllReview(id string) ([]*v1.DeckCardReviewResp, error) {
-	q := s.query
-	q.Record.Where().Find()
+/*
+*
+SELECT
 
-	panic("not implement")
+	*
+
+FROM
+
+	record r
+
+JOIN knowledge k ON r.knowledge_id = k.id
+WHERE
+
+	DATE( r.Due ) < CURDATE()
+*/
+func (s *knowledgeService) GetAllReview(id string) ([]*v1.DeckCardReviewResp, error) {
+	reviewList := make([]v1.DeckCardReviewResp, 0)
+	q := s.query
+	q.Transaction(func(tx *query.Query) error {
+		now := time.Now()
+		deadLine := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC)
+		records, err := tx.Record.Join(tx.Knowledge, tx.Record.KnowledgeID.EqCol(tx.Knowledge.ID)).
+			Where(tx.Record.Due.Lt(time.Now()), tx.Record.UserID.Eq(id)).Order().Find()
+		if err != nil {
+			return err
+		}
+		decks, err := tx.Deck.Where(tx.Deck.UserID.Eq(id)).Find()
+		if err != nil {
+			return err
+		}
+		for i := 0; i < len(decks); i++ {
+			// 查看在这个decks下边有没得需要复习的
+		}
+
+		return nil
+	})
+}
+
+// 进行一次复习计算，算出时间间隔，并更新到数据库
+func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) error {
+	p := fsrs.DefaultParam()
+	// 先就用这个默认的
+	p.W = fsrs.DefaultWeights()
+	q := s.query
+	record, err := q.Record.Where(q.Record.ID.Eq(t.RecordID)).First()
+	fmt.Printf("%#v\n", record)
+	if err != nil {
+		return err
+	}
+	q.Knowledge.Where(q.Knowledge.ID.Eq(t.ID))
+	card := fsrs.Card{
+		Due:           record.Due,
+		Stability:     record.Stability,
+		Difficulty:    record.Difficulty,
+		ElapsedDays:   uint64(record.ElapsedDays),
+		ScheduledDays: uint64(record.ScheduledDays),
+		Reps:          uint64(record.Reps),
+		Lapses:        uint64(record.Lapses),
+		State:         fsrs.State(record.State),
+		LastReview:    record.LastReview,
+	}
+	schedulingCards := p.Repeat(card, time.Now())
+	// 新纪录
+	card = schedulingCards[t.Opt].Card
+	newRecord := model.Record{
+		KnowledgeID:   t.ID,
+		Due:           card.Due,
+		Stability:     card.Stability,
+		Difficulty:    card.Difficulty,
+		ElapsedDays:   int64(card.ElapsedDays),
+		ScheduledDays: int64(card.ScheduledDays),
+		Reps:          int64(card.Reps),
+		Lapses:        int64(card.Lapses),
+		State:         int64(card.State),
+		On:            1,
+		Lastop:        int64(t.Opt),
+		LastReview:    time.Now(),
+		UserID:        userid,
+	}
+	err = q.Transaction(func(tx *query.Query) error {
+		// 新的record插入进去，旧的record进行抛掉
+		_, err := tx.Record.Where(q.Record.ID.Eq(t.RecordID)).Update(q.Record.On, 0)
+		if err != nil {
+			return err
+		}
+		err = tx.Record.Create(&newRecord)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

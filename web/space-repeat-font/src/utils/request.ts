@@ -9,7 +9,7 @@ export const SelfUrl:string= 'http://localhost:5173/'
 // import {stringify} from "querystring";
 // 创建 axios 实例
 const request = axios.create({
-    baseURL: 'http://127.0.0.1:8000/'
+    baseURL: 'http://peifeng.site:8003/'
 })
 
 // 请求拦截器

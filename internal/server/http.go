@@ -107,9 +107,10 @@ func NewHTTPServer(
 			// 这个人该复习的所有
 			review.GET("/", knowledgeHandler.GetAllReview)
 			// 一次复习操作
-			review.PUT("/option")
+			review.PUT("/option", knowledgeHandler.ReviewOpt)
 			//取消一张卡片的复习调度
 			review.PUT("/card/cancel")
+
 		}
 
 	}
