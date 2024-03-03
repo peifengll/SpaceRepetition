@@ -50,3 +50,6 @@ func TestExample(t *testing.T) {
 		t.Errorf("excepted:%v, got:%v", stateList, wantStateList)
 	}
 }
+
+func TestRating_String(t *testing.T) {
+}

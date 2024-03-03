@@ -19,15 +19,14 @@ type KnowledgeService interface {
 	DeleteCard(id int64) error
 	SearchCards(content string, userId string) ([]*v1.CardResp, error)
 	ChooseToReview(ids []int64, userId string) error
-	GetAllReview(id string) ([]*v1.DeckCardReviewResp, error)
+	GetAllReview(id string) ([]v1.DeckCardReviewResp, error)
 	ReviewOp(t *v1.CardReviewOptReq, userid string) error
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
 	return &knowledgeService{
-		Service: service,
-		query:   que,
-
+		Service:             service,
+		query:               que,
 		knowledgeRepository: knowledgeRepository,
 	}
 }
@@ -168,42 +167,13 @@ func (s *knowledgeService) ChooseToReview(ids []int64, userId string) error {
 	return nil
 }
 
-/*
-*
-SELECT
+func (s *knowledgeService) GetAllReview(id string) ([]v1.DeckCardReviewResp, error) {
+	reviews, err := s.knowledgeRepository.GetAllReviewCard(id)
+	if err == nil && reviews == nil {
+		return make([]v1.DeckCardReviewResp, 0), nil
+	}
+	return reviews, err
 
-	*
-
-FROM
-
-	record r
-
-JOIN knowledge k ON r.knowledge_id = k.id
-WHERE
-
-	DATE( r.Due ) < CURDATE()
-*/
-func (s *knowledgeService) GetAllReview(id string) ([]*v1.DeckCardReviewResp, error) {
-	reviewList := make([]v1.DeckCardReviewResp, 0)
-	q := s.query
-	q.Transaction(func(tx *query.Query) error {
-		now := time.Now()
-		deadLine := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC)
-		records, err := tx.Record.Join(tx.Knowledge, tx.Record.KnowledgeID.EqCol(tx.Knowledge.ID)).
-			Where(tx.Record.Due.Lt(time.Now()), tx.Record.UserID.Eq(id)).Order().Find()
-		if err != nil {
-			return err
-		}
-		decks, err := tx.Deck.Where(tx.Deck.UserID.Eq(id)).Find()
-		if err != nil {
-			return err
-		}
-		for i := 0; i < len(decks); i++ {
-			// 查看在这个decks下边有没得需要复习的
-		}
-
-		return nil
-	})
 }
 
 // 进行一次复习计算，算出时间间隔，并更新到数据库

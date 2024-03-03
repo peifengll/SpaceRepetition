@@ -153,6 +153,7 @@ func (h *KnowledgeHandler) GetAllReview(ctx *gin.Context) {
 	}
 	review, err := h.knowledgeService.GetAllReview(userId)
 	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
 	v1.HandleSuccess(ctx, review)
