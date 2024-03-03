@@ -49,3 +49,9 @@ else
 	   go run ./cmd/server
 endif
 
+
+# 强制拉取最新分支覆盖到本地
+force:
+	git fetch --all
+	git reset --hard origin/main
+	git pull
