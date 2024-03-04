@@ -18,7 +18,7 @@ type KnowledgeService interface {
 	UpdateCard(v *v1.CardRequest) error
 	DeleteCard(id int64) error
 	SearchCards(content string, userId string) ([]*v1.CardResp, error)
-	ChooseToReview(ids []int64, userId string) error
+	ChooseToReview(ids int64, userId string) error
 	GetAllReview(id string) ([]v1.DeckCardReviewResp, error)
 	ReviewOp(t *v1.CardReviewOptReq, userid string) error
 }
@@ -129,35 +129,32 @@ func (s *knowledgeService) SearchCards(content string, userId string) ([]*v1.Car
 //
 // 对了，应该不需要用事务的方式去做...?因为只要加入了复习，其实也不影响，。。。。
 // 不对，还是要以事务的方式去做，因为 设计两个表，一个更新了，另一个却没更新，这是不得行的
-func (s *knowledgeService) ChooseToReview(ids []int64, userId string) error {
+func (s *knowledgeService) ChooseToReview(id int64, userId string) error {
 	//	这里要用事务来做，全部都开始复习
 	q := s.query
 	q.Transaction(func(tx *query.Query) error {
 		// 第一步 更新为onlearning
-		_, err := tx.Knowledge.Where(tx.Knowledge.ID.In(ids...)).Update(tx.Knowledge.Onlearning, 1)
+		_, err := tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).Update(tx.Knowledge.Onlearning, 1)
 		if err != nil {
 			return err
 		}
-		records := make([]*model.Record, len(ids))
-		for i := 0; i < len(ids); i++ {
-			//_, err := tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).Update(tx.Knowledge.Onlearning, 1)
-			// 第二步 增加记录到复习里边去
-			records[i] = &model.Record{
-				KnowledgeID:   ids[i],
-				Due:           time.Now(),
-				Stability:     0,
-				Difficulty:    0,
-				ElapsedDays:   0,
-				ScheduledDays: 0,
-				Reps:          0,
-				Lapses:        0,
-				State:         int64(fsrs.New),
-				On:            1,
-				LastReview:    time.Now(),
-				UserID:        userId,
-			}
+		//_, err := tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).Update(tx.Knowledge.Onlearning, 1)
+		// 第二步 增加记录到复习里边去
+		records := &model.Record{
+			KnowledgeID:   id,
+			Due:           time.Now(),
+			Stability:     0,
+			Difficulty:    0,
+			ElapsedDays:   0,
+			ScheduledDays: 0,
+			Reps:          0,
+			Lapses:        0,
+			State:         int64(fsrs.New),
+			On:            1,
+			LastReview:    time.Now(),
+			UserID:        userId,
 		}
-		err = tx.Record.Create(records...)
+		err = tx.Record.Create(records)
 		if err != nil {
 			return err
 		}

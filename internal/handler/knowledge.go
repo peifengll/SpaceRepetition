@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -130,13 +132,22 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 		return
 	}
 
-	var ids v1.CardIdReq
-	err = ctx.BindJSON(&ids)
+	var id v1.CardIdReq
+	fmt.Println("***********************")
+	err = ctx.BindJSON(&id)
+	fmt.Println("id", id)
+	fmt.Println(err)
+	fmt.Println("***********************")
+
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
-	err = h.knowledgeService.ChooseToReview(ids.Ids, userId)
+	iid, err := strconv.Atoi(id.Id)
+	if err != nil {
+		log.Println("转化:::", err)
+	}
+	err = h.knowledgeService.ChooseToReview(int64(iid), userId)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return

@@ -46,7 +46,7 @@ FROM
 	knowledge k
 	LEFT JOIN record r ON k.id = r.knowledge_id 
 WHERE
-	DATE( r.Due ) < CURDATE() 
+	DATE( r.Due ) <= CURDATE() 
 ORDER BY
 	k.deckid 
 `

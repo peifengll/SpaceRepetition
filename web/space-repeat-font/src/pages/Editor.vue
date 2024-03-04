@@ -53,6 +53,9 @@
             <el-menu-item :index="card.id" v-for="card in section.cards">
               <el-popover placement="bottom" :width="50" trigger="contextmenu">
                 <el-button style="width: 130px" @click="delCard(card.id)">删除卡片</el-button>
+                <br>
+                <el-button v-if="CheckOn(card.onlearning)" style="width: 130px" @click="AddToReview(card.id)">加入复习
+                </el-button>
                 <!--                <br>-->
                 <!--                <el-button style="width: 130px" @click="renameSection(section.id)">重命名</el-button>-->
 
@@ -200,9 +203,9 @@ const getDeckAndAllDetail = () => {
     return
   }
   request.get("/v1/decks/deck/" + deckId.id).then((res) => {
-    console.log(res.data.data.sections)
+    // console.log(res.data.data.sections)
     sections.value = res.data.data.sections
-    console.log("aaa", sections.value)
+    // console.log("aaa", sections.value)
   }).catch((res) => {
     console.log(res)
   })
@@ -462,6 +465,26 @@ const delFolder = (id: number) => {
   openDel(id)
 }
 
+const CheckOn = (id: number) => {
+  return id == 0;
+}
+
+const AddToReview = (id: number) => {
+  request.put("/v1/decks/card/toreview", {
+    id:id,
+  }).then((res) => {
+    ElMessage({
+      type: 'success',
+      message: `加入复习成功`,
+    })
+    getDeckAndAllDetail()
+  }).catch((res) => {
+    ElMessage({
+      type: 'error',
+      message: '加入复习失败:' + res.toString(),
+    })
+  })
+}
 
 </script>
 

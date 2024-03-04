@@ -27,7 +27,7 @@ type CardRequest struct {
 }
 
 type CardIdReq struct {
-	Ids []int64 `json:"ids"`
+	Id string `json:"id"`
 }
 
 type CardReviewResp struct {

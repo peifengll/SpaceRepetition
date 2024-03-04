@@ -29,6 +29,7 @@
     "@types/node": "^20.10.8",
     "@vitejs/plugin-vue": "^4.5.2",
     "less": "^4.2.0",
+    "naive-ui": "^2.38.1",
     "sass": "^1.69.7",
     "typescript": "^5.2.2",
     "unplugin-auto-import": "^0.17.3",

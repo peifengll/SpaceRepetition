@@ -7,6 +7,7 @@ import elementPlus from './plugins/element-plus'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import piniaPlugin from './plugins/piniaPlugin'
 import './styles/global.css'
+import naive from 'naive-ui'
 
 const store = createPinia()
 store.use(piniaPlugin({ // 第三步
@@ -17,4 +18,5 @@ createApp(App)
     .use(router)
     .use(store)
     .use(elementPlus)
+    .use(naive)
     .mount('#app')
