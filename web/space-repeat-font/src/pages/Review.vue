@@ -1,4 +1,24 @@
 <script setup lang="ts">
+import request from "../utils/request.ts";
+import {ref} from "vue";
+
+const getAllReview=()=>{
+  console.log("9999")
+  request.get("/v1/review/", {}).then(res => {
+    console.log("zzzz")
+    console.log(res)
+  }).catch(res=>{
+    console.log("报错")
+    console.log(res)
+  })
+  console.log("asas")
+}
+
+// 在页面加载时调用 API 获取数据
+onBeforeMount(() => {
+  getAllReview()
+  console.log("66666666666")
+})
 
 </script>
 

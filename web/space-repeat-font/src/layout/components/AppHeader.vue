@@ -5,6 +5,7 @@
       class="el-menu-demo"
       mode="horizontal"
       :ellipsis="false"
+      :route="true"
       @select="handleSelect"
   >
     <el-menu-item index="0" @click="toHomeIndex">
@@ -15,8 +16,7 @@
       />
     </el-menu-item>
     <div class="flex-grow"/>
-    <el-menu-item index="1">Processing Center</el-menu-item>
-    <el-menu-item index="3">开始学习</el-menu-item>
+    <el-menu-item index="3"  @click="toReviewPage" >开始学习</el-menu-item>
     <el-sub-menu index="2">
       <template #title>Workspace</template>
       <el-menu-item index="2-1">item one</el-menu-item>
@@ -42,10 +42,16 @@ const handleSelect = (key: string, keyPath: string[]) => {
 import {SelfUrl}from '@/utils/request.ts'
 
 const toHomeIndex = () => {
-
   // location.reload()
   window.location.href=SelfUrl
 }
+
+const toReviewPage = () => {
+  // location.reload()
+  window.location.href=SelfUrl+"review"
+}
+
+
 </script>
 
 <style>

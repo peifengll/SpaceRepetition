@@ -34,7 +34,6 @@ func (r *knowledgeRepository) GetAllReviewCard(userid string) ([]v1.DeckCardRevi
 		r.logger.Error(err.Error())
 		return nil, err
 	}
-
 	sql := `
 SELECT
 	k.id,
@@ -63,8 +62,23 @@ ORDER BY
 	}
 	reviews := make([]v1.DeckCardReviewResp, 0)
 	i := 0
-
+	//for i := 0; i < len(cards); i++ {
+	//	fmt.Printf("%#v\n", cards[i])
+	//}
 	for i < len(cards) {
+		if i+1 == len(cards) {
+			c := model.Deck{}
+			err = r.db.Model(&model.Deck{}).Select("name").Where("id=?", cards[i].DeckID).First(&c).Error
+			if err != nil {
+				r.logger.Warn(err.Error())
+			}
+			reviews = append(reviews, v1.DeckCardReviewResp{
+				ID:    cards[i].DeckID,
+				Name:  c.Name,
+				Cards: cards[i:],
+			})
+			break
+		}
 		for j := i + 1; j < len(cards); j++ {
 			if cards[j].DeckID != cards[i].DeckID {
 				c := model.Deck{}
