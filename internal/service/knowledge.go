@@ -20,7 +20,7 @@ type KnowledgeService interface {
 	SearchCards(content string, userId string) ([]*v1.CardResp, error)
 	ChooseToReview(ids int64, userId string) error
 	GetAllReview(id string) ([]v1.DeckCardReviewResp, error)
-	ReviewOp(t *v1.CardReviewOptReq, userid string) error
+	ReviewOp(t *v1.CardReviewOptReq, userid string) (bool, error)
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
@@ -174,15 +174,15 @@ func (s *knowledgeService) GetAllReview(id string) ([]v1.DeckCardReviewResp, err
 }
 
 // 进行一次复习计算，算出时间间隔，并更新到数据库
-func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) error {
+func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (bool, error) {
 	p := fsrs.DefaultParam()
 	// 先就用这个默认的
 	p.W = fsrs.DefaultWeights()
 	q := s.query
-	record, err := q.Record.Where(q.Record.ID.Eq(t.RecordID)).First()
+	record, err := q.Record.Where(q.Record.KnowledgeID.Eq(t.ID), q.Record.On.Eq(1)).First()
 	fmt.Printf("%#v\n", record)
 	if err != nil {
-		return err
+		return false, err
 	}
 	q.Knowledge.Where(q.Knowledge.ID.Eq(t.ID))
 	card := fsrs.Card{
@@ -216,7 +216,7 @@ func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) error
 	}
 	err = q.Transaction(func(tx *query.Query) error {
 		// 新的record插入进去，旧的record进行抛掉
-		_, err := tx.Record.Where(q.Record.ID.Eq(t.RecordID)).Update(q.Record.On, 0)
+		_, err := tx.Record.Where(q.Record.ID.Eq(record.ID)).Update(q.Record.On, 0)
 		if err != nil {
 			return err
 		}
@@ -227,7 +227,22 @@ func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) error
 		return nil
 	})
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	if isToday(newRecord.Due) {
+		return true, nil
+	}
+	return false, nil
+}
+
+func isToday(t time.Time) bool {
+
+	// 获取当前时间的年、月、日
+	currentYear, currentMonth, currentDay := time.Now().Date()
+
+	// 获取给定时间的年、月、日
+	year, month, day := t.Date()
+
+	// 比较日期部分是否相等
+	return year == currentYear && month == currentMonth && day == currentDay
 }

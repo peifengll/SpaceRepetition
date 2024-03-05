@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 )
@@ -41,12 +42,13 @@ SELECT
 	k.font,
 	k.originfont,
 	k.back ,
-	k.deckid
+	k.deckid,
+	k.typeof
 FROM
 	knowledge k
 	LEFT JOIN record r ON k.id = r.knowledge_id 
 WHERE
-	DATE( r.Due ) <= CURDATE() 
+	DATE( r.Due ) <= CURDATE() and r.on=1
 ORDER BY
 	k.deckid 
 `
@@ -62,9 +64,12 @@ ORDER BY
 	}
 	reviews := make([]v1.DeckCardReviewResp, 0)
 	i := 0
-	//for i := 0; i < len(cards); i++ {
-	//	fmt.Printf("%#v\n", cards[i])
-	//}
+	fmt.Println("+++++++++++++++++++++++")
+	for i := 0; i < len(cards); i++ {
+		fmt.Printf("%#v\n", cards[i])
+	}
+	fmt.Println("+++++++++++++++++++++++")
+
 	for i < len(cards) {
 		if i+1 == len(cards) {
 			c := model.Deck{}
@@ -79,8 +84,10 @@ ORDER BY
 			})
 			break
 		}
+		allIs := true
 		for j := i + 1; j < len(cards); j++ {
 			if cards[j].DeckID != cards[i].DeckID {
+				allIs = false
 				c := model.Deck{}
 				err = r.db.Model(&model.Deck{}).Select("name").Where("id=?", cards[i].DeckID).First(&c).Error
 				if err != nil {
@@ -94,6 +101,23 @@ ORDER BY
 				i = j
 			}
 		}
+		if allIs {
+			c := model.Deck{}
+			err = r.db.Model(&model.Deck{}).Select("name").Where("id=?", cards[i].DeckID).First(&c).Error
+			if err != nil {
+				r.logger.Warn(err.Error())
+			}
+			reviews = append(reviews, v1.DeckCardReviewResp{
+				ID:    cards[i].DeckID,
+				Name:  c.Name,
+				Cards: cards[i:],
+			})
+			break
+		}
 	}
+	fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+	fmt.Printf("%#v\n", reviews)
+	fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 	return reviews, nil
 }

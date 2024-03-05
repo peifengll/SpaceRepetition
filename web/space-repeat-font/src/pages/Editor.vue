@@ -352,6 +352,7 @@ const StartAddCard = () => {
   } else if (cardType.value == 2) {
     if (inputCardType2.value != "") {
       request.post("/v1/decks/card", {
+        font: inputCardType2.value,
         originfont: inputCardType2.value,
         typeof: 2,
         deckid: Number(deckId.id),
@@ -471,7 +472,7 @@ const CheckOn = (id: number) => {
 
 const AddToReview = (id: number) => {
   request.put("/v1/decks/card/toreview", {
-    id:id,
+    id: id,
   }).then((res) => {
     ElMessage({
       type: 'success',

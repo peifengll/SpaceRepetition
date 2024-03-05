@@ -37,10 +37,11 @@ type CardReviewResp struct {
 	Originfont string `gorm:"column:originfont;type:longtext" json:"originfont"`
 	Back       string `gorm:"column:back;type:longtext" json:"back"`
 	DeckID     int64  `gorm:"column:deckid" json:"deckid,string"`
+	Typeof     int64  `gorm:"column:typeof;type:bigint" json:"typeof"`
 }
 
 type CardReviewOptReq struct {
-	RecordID int64 `json:"record_id,string"`
-	ID       int64 `json:"id,string"`
-	Opt      fsrs.Rating
+	RecordID int64       `json:"record_id,string"`
+	ID       int64       `json:"id"`
+	Opt      fsrs.Rating `json:"opt"`
 }
