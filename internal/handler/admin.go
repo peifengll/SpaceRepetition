@@ -64,3 +64,50 @@ func (h *AdminHandler) Login(ctx *gin.Context) {
 		AccessToken: token,
 	})
 }
+
+func (h *AdminHandler) UpdatePrivileges(ctx *gin.Context) {
+	var req v1.UpdatePrivilegesReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+	id, err := strconv.Atoi(GetUserIdFromCtx(ctx))
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	err = h.adminService.UpdatePrivileges(ctx, &req, id)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrUnauthorized, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+func (h *AdminHandler) DelAdminAccount(ctx *gin.Context) {
+	var req v1.DelAdminReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+	id, err := strconv.Atoi(GetUserIdFromCtx(ctx))
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	err = h.adminService.DelAdminAccount(ctx, &req, id)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrUnauthorized, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+func (h *AdminHandler) ShowAdminAccounts(ctx *gin.Context) {
+	res, err := h.adminService.GetAccounts(ctx)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrUnauthorized, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, res)
+}

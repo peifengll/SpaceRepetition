@@ -129,6 +129,7 @@ func NewHTTPServerAdmin(
 	recordHandler *handler.RecordHandler,
 	sectionHandler *handler.SectionHandler,
 	adminHandler *handler.AdminHandler,
+	announcementsHandler *handler.AnnouncementsHandler,
 ) *http.ServerAdmin {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServerAdmin(
@@ -153,9 +154,18 @@ func NewHTTPServerAdmin(
 	noAuthRouter := s.Group("admin/")
 	{
 		noAuthRouter.POST("/login", adminHandler.Login)
+		noAuthRouter.GET("/announcement", announcementsHandler.ShowAnnouncement)
 		AuthRouter := noAuthRouter.Group("").Use(middleware.StrictAuth(jwt, logger))
 		{
 			AuthRouter.POST("/register", adminHandler.Register)
+			AuthRouter.PUT("/privileges", adminHandler.UpdatePrivileges)
+			AuthRouter.DELETE("/account", adminHandler.DelAdminAccount)
+			AuthRouter.GET("/accounts", adminHandler.ShowAdminAccounts)
+
+			AuthRouter.POST("/announcement", announcementsHandler.AddAnnouncement)
+			AuthRouter.DELETE("/announcement", announcementsHandler.DelAnnouncement)
+			AuthRouter.PUT("/announcement", announcementsHandler.UpdateAnnouncement)
+
 		}
 	}
 

@@ -14,6 +14,9 @@ type AdminService interface {
 	GetAdmin(ctx context.Context, id int) (*model.Admin, error)
 	Register(ctx context.Context, req *v1.AdminRegisterReq, alter int) error
 	Login(ctx context.Context, req *v1.LoginAdminReq) (string, error)
+	UpdatePrivileges(ctx context.Context, req *v1.UpdatePrivilegesReq, alter int) error
+	DelAdminAccount(ctx context.Context, req *v1.DelAdminReq, alter int) error
+	GetAccounts(ctx context.Context) ([]model.Admin, error)
 }
 
 func NewAdminService(service *Service, adminRepository repository.AdminRepository) AdminService {
@@ -92,4 +95,42 @@ func (s *adminService) Login(ctx context.Context, req *v1.LoginAdminReq) (string
 	}
 
 	return token, nil
+}
+
+func (s *adminService) UpdatePrivileges(ctx context.Context, req *v1.UpdatePrivilegesReq, alter int) error {
+	// check Privileges
+	admin, err := s.GetAdmin(ctx, alter)
+	if err != nil {
+		return err
+	}
+	if admin == nil {
+		return v1.ErrUnauthorized
+	}
+	if admin.Privileges > req.Privileges {
+		return v1.ErrPrivileges
+	}
+	var info model.Admin
+	info.ID = req.ID
+	info.Privileges = req.Privileges
+	return s.adminRepository.Update(ctx, &info)
+}
+
+func (s *adminService) DelAdminAccount(ctx context.Context, req *v1.DelAdminReq, alter int) error {
+	// check Privileges
+	admin, err := s.GetAdmin(ctx, alter)
+	if err != nil {
+		return err
+	}
+	if admin == nil {
+		return v1.ErrUnauthorized
+	}
+	beDel, err := s.GetAdmin(ctx, int(req.ID))
+	if admin.Privileges >= beDel.Privileges {
+		return v1.ErrPrivileges
+	}
+	return s.adminRepository.DelById(ctx, beDel.ID)
+}
+
+func (s *adminService) GetAccounts(ctx context.Context) ([]model.Admin, error) {
+	return s.adminRepository.ShowAll(ctx)
 }

@@ -11,6 +11,8 @@ type AdminRepository interface {
 	Create(ctx context.Context, admin *model.Admin) error
 	Update(ctx context.Context, admin *model.Admin) error
 	GetAdminByUserName(ctx context.Context, username string) (*model.Admin, error)
+	DelById(ctx context.Context, id int64) error
+	ShowAll(ctx context.Context) ([]model.Admin, error)
 }
 
 func NewAdminRepository(
@@ -60,8 +62,32 @@ func (r *adminRepository) Create(ctx context.Context, admin *model.Admin) error 
 	return nil
 }
 
+func (r *adminRepository) ShowAll(ctx context.Context) ([]model.Admin, error) {
+	var res []model.Admin
+	sql := `
+	select id,
+       username,
+       email,
+       name,
+       phone,
+       privileges
+	from admins
+	`
+	if err := r.DB(ctx).Raw(sql).Find(&res).Error; err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (r *adminRepository) Update(ctx context.Context, admin *model.Admin) error {
-	if err := r.DB(ctx).Save(admin).Error; err != nil {
+	if err := r.DB(ctx).Updates(admin).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *adminRepository) DelById(ctx context.Context, id int64) error {
+	if err := r.DB(ctx).Delete(&model.Admin{}, id).Error; err != nil {
 		return err
 	}
 	return nil

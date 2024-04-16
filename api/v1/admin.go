@@ -32,6 +32,5 @@ type LoginAdminResponse struct {
 }
 
 type DelAdminReq struct {
-	ID     int64 `json:"id"`
-	SelfId int64 `json:"self_id"` // 改东西的人的id
+	ID int64 `json:"id"`
 }
