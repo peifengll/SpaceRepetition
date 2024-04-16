@@ -15,22 +15,22 @@ const TableNameRecord = "record"
 // Record mapped from table <record>
 type Record struct {
 	ID            int64          `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id,string"`
-	CreatedAt     time.Time      `gorm:"column:created_at;comment:创建时间" json:"createdAt"`
-	UpdatedAt     time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updatedAt"`
+	CreatedAt     time.Time      `gorm:"column:created_at;comment:创建时间" json:"createdAt"` // 创建时间
+	UpdatedAt     time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updatedAt"` // 更新时间
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;type:datetime(3)" json:"-"`
-	KnowledgeID   int64          `gorm:"column:knowledge_id;type:bigint unsigned;comment:这张卡片跟哪一个知识点有关" json:"knowledgeId"` // 这张卡片跟哪一个知识点有关
-	Due           time.Time      `gorm:"column:Due;type:datetime(3);comment:到期时间，也就是该复习的日子" json:"due"`                     // 到期时间，也就是该复习的日子
-	Stability     float64        `gorm:"column:Stability;type:double" json:"stability"`
-	Difficulty    float64        `gorm:"column:Difficulty;type:double" json:"difficulty"`
-	ElapsedDays   int64          `gorm:"column:ElapsedDays;type:bigint unsigned" json:"elapsedDays"`
-	ScheduledDays int64          `gorm:"column:ScheduledDays;type:bigint unsigned" json:"scheduledDays"`
-	Reps          int64          `gorm:"column:Reps;type:bigint unsigned" json:"reps"`
-	Lapses        int64          `gorm:"column:Lapses;type:bigint unsigned" json:"lapses"`
-	State         int64          `gorm:"column:State;type:tinyint" json:"state"`
-	On            int64          `gorm:"column:On;type:tinyint(1);comment:是否被使用" json:"on"`      // 是否被使用
-	Lastop        int64          `gorm:"column:lastop;type:bigint;comment:上一次的选择" json:"lastop"` // 上一次的选择
-	LastReview    time.Time      `gorm:"column:LastReview;type:datetime(3)" json:"lastReview"`
-	UserID        string         `gorm:"column:user_id;type:varchar(191);comment:属于哪一个用户" json:"userId"` // 属于哪一个用户
+	KnowledgeID   int64          `gorm:"column:knowledge_id;type:bigint unsigned;not null;comment:这张卡片跟哪一个知识点有关" json:"knowledgeId"` // 这张卡片跟哪一个知识点有关
+	Due           time.Time      `gorm:"column:Due;type:datetime(3);not null;comment:到期时间，也就是该复习的日子" json:"due"`                     // 到期时间，也就是该复习的日子
+	Stability     float64        `gorm:"column:Stability;type:double;not null;comment:稳定性" json:"stability"`                         // 稳定性
+	Difficulty    float64        `gorm:"column:Difficulty;type:double;not null;comment:难度" json:"difficulty"`                        // 难度
+	ElapsedDays   int64          `gorm:"column:ElapsedDays;type:bigint unsigned;not null;comment:已过天数" json:"elapsedDays"`           // 已过天数
+	ScheduledDays int64          `gorm:"column:ScheduledDays;type:bigint unsigned;not null;comment:几乎天数" json:"scheduledDays"`       // 几乎天数
+	Reps          int64          `gorm:"column:Reps;type:bigint unsigned;not null;comment:重复次数" json:"reps"`                         // 重复次数
+	Lapses        int64          `gorm:"column:Lapses;type:bigint unsigned;not null;comment:失误次数" json:"lapses"`                     // 失误次数
+	State         int64          `gorm:"column:State;type:tinyint;not null" json:"state"`
+	On            int64          `gorm:"column:On;type:tinyint(1);not null;comment:是否被使用" json:"on"`                   // 是否被使用
+	Lastop        int64          `gorm:"column:lastop;type:bigint;comment:上一次的选择" json:"lastop"`                       // 上一次的选择
+	LastReview    time.Time      `gorm:"column:LastReview;type:datetime(3);not null;comment:最后复习时间" json:"lastReview"` // 最后复习时间
+	UserID        string         `gorm:"column:user_id;type:varchar(191);not null;comment:属于哪一个用户" json:"userId"`      // 属于哪一个用户
 }
 
 // TableName Record's table name

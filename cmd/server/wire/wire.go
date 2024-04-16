@@ -56,15 +56,16 @@ var handlerSet = wire.NewSet(
 )
 
 var serverSet = wire.NewSet(
-	server.NewHTTPServer,
+	server.NewHTTPServerFont,
+	server.NewHTTPServerAdmin,
 	server.NewJob,
 	server.NewTask,
 )
 
 // build App
-func newApp(httpServer *http.Server, job *server.Job) *app.App {
+func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job) *app.App {
 	return app.NewApp(
-		app.WithServer(httpServer, job),
+		app.WithServer(httpServer, httpServer2, job),
 		app.WithName("demo-server"),
 	)
 }

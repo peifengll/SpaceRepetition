@@ -55,22 +55,22 @@ type record struct {
 
 	ALL           field.Asterisk
 	ID            field.Int64
-	CreatedAt     field.Time
-	UpdatedAt     field.Time
+	CreatedAt     field.Time // 创建时间
+	UpdatedAt     field.Time // 更新时间
 	DeletedAt     field.Field
-	KnowledgeID   field.Int64
-	Due           field.Time
-	Stability     field.Float64
-	Difficulty    field.Float64
-	ElapsedDays   field.Int64
-	ScheduledDays field.Int64
-	Reps          field.Int64
-	Lapses        field.Int64
+	KnowledgeID   field.Int64   // 这张卡片跟哪一个知识点有关
+	Due           field.Time    // 到期时间，也就是该复习的日子
+	Stability     field.Float64 // 稳定性
+	Difficulty    field.Float64 // 难度
+	ElapsedDays   field.Int64   // 已过天数
+	ScheduledDays field.Int64   // 几乎天数
+	Reps          field.Int64   // 重复次数
+	Lapses        field.Int64   // 失误次数
 	State         field.Int64
-	On            field.Int64
-	Lastop        field.Int64
-	LastReview    field.Time
-	UserID        field.String
+	On            field.Int64  // 是否被使用
+	Lastop        field.Int64  // 上一次的选择
+	LastReview    field.Time   // 最后复习时间
+	UserID        field.String // 属于哪一个用户
 
 	fieldMap map[string]field.Expr
 }

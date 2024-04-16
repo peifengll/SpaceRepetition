@@ -15,15 +15,15 @@ const TableNameDeck = "decks"
 // Deck mapped from table <decks>
 type Deck struct {
 	ID           int64          `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id,string"`
-	CreatedAt    time.Time      `gorm:"column:created_at;comment:创建时间" json:"createdAt"`
-	UpdatedAt    time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updatedAt"`
+	CreatedAt    time.Time      `gorm:"column:created_at;comment:创建时间" json:"createdAt"` // 创建时间
+	UpdatedAt    time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updatedAt"` // 更新时间
 	DeletedAt    gorm.DeletedAt `gorm:"column:deleted_at;type:datetime(3)" json:"-"`
-	Name         string         `gorm:"column:name;type:longtext" json:"name"`
-	Cardnum      int64          `gorm:"column:cardnum;type:bigint" json:"cardnum"`
-	Learnnumber  int64          `gorm:"column:learnnumber;type:bigint" json:"learnnumber"`
-	Introduction string         `gorm:"column:introduction;type:longtext" json:"introduction"`
-	Floderid     int64          `gorm:"column:floderid;type:bigint" json:"floderid"`
-	UserID       string         `gorm:"column:user_id;type:varchar(191)" json:"userId"`
+	Name         string         `gorm:"column:name;type:longtext;comment:牌组名" json:"name"`                         // 牌组名
+	Cardnum      int64          `gorm:"column:cardnum;type:bigint;not null;comment:卡片数量" json:"cardnum"`           // 卡片数量
+	Learnnumber  int64          `gorm:"column:learnnumber;type:bigint;not null;comment:在学习中数量" json:"learnnumber"` // 在学习中数量
+	Introduction string         `gorm:"column:introduction;type:longtext;comment:简介" json:"introduction"`          // 简介
+	Floderid     int64          `gorm:"column:floderid;type:bigint;not null;comment:文件夹id" json:"floderid"`        // 文件夹id
+	UserID       string         `gorm:"column:user_id;type:varchar(191);not null;comment:用户id" json:"userId"`      // 用户id
 }
 
 // TableName Deck's table name

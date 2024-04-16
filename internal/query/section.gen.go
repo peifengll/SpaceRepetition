@@ -45,12 +45,12 @@ type section struct {
 
 	ALL       field.Asterisk
 	ID        field.Int64
-	CreatedAt field.Time
-	UpdatedAt field.Time
+	CreatedAt field.Time // 创建时间
+	UpdatedAt field.Time // 更新时间
 	DeletedAt field.Field
 	Deckid    field.Int64
 	Name      field.String
-	UserID    field.String
+	UserID    field.String // 属于哪一个用户
 
 	fieldMap map[string]field.Expr
 }

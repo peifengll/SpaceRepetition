@@ -6,7 +6,6 @@ package query
 
 import (
 	"context"
-	"strings"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -46,12 +45,12 @@ type floder struct {
 
 	ALL       field.Asterisk
 	ID        field.Int64
-	CreatedAt field.Time
-	UpdatedAt field.Time
+	CreatedAt field.Time // 创建时间
+	UpdatedAt field.Time // 更新时间
 	DeletedAt field.Field
-	Name      field.String
-	UserID    field.String
-	Decknum   field.Int64
+	Name      field.String // 文件夹的名字叫啥
+	UserID    field.String // 属于哪个用户
+	Decknum   field.Int64  // 有几个牌组
 
 	fieldMap map[string]field.Expr
 }
@@ -172,39 +171,6 @@ type IFloderDo interface {
 	Returning(value interface{}, columns ...string) IFloderDo
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
-
-	FindByUserId(UserID string) (result []model.Floder, err error)
-	DelOneByID(id int64) (err error)
-}
-
-// sql(select * from @@table where user_id = @UserID)
-func (f floderDo) FindByUserId(UserID string) (result []model.Floder, err error) {
-	var params []interface{}
-
-	var generateSQL strings.Builder
-	params = append(params, UserID)
-	generateSQL.WriteString("select * from floder where user_id = ? ")
-
-	var executeSQL *gorm.DB
-	executeSQL = f.UnderlyingDB().Raw(generateSQL.String(), params...).Find(&result) // ignore_security_alert
-	err = executeSQL.Error
-
-	return
-}
-
-// sql(delete from @@table where id = @id)
-func (f floderDo) DelOneByID(id int64) (err error) {
-	var params []interface{}
-
-	var generateSQL strings.Builder
-	params = append(params, id)
-	generateSQL.WriteString("delete from floder where id = ? ")
-
-	var executeSQL *gorm.DB
-	executeSQL = f.UnderlyingDB().Exec(generateSQL.String(), params...) // ignore_security_alert
-	err = executeSQL.Error
-
-	return
 }
 
 func (f floderDo) Debug() IFloderDo {

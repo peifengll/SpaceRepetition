@@ -51,18 +51,18 @@ type knowledge struct {
 
 	ALL        field.Asterisk
 	ID         field.Int64
-	CreatedAt  field.Time
-	UpdatedAt  field.Time
+	CreatedAt  field.Time // 创建时间
+	UpdatedAt  field.Time // 更新时间
 	DeletedAt  field.Field
 	Font       field.String
 	Originfont field.String
 	Back       field.String
-	Onlearning field.Int64
-	Typeof     field.Int64
-	Deckid     field.Int64
-	Skilled    field.Float64
-	Sectionid  field.Int64
-	UserID     field.String
+	Onlearning field.Int64   // 是否在学习
+	Typeof     field.Int64   // 卡片类型
+	Deckid     field.Int64   // 牌组id
+	Skilled    field.Float64 // 熟练度
+	Sectionid  field.Int64   // 章节id
+	UserID     field.String  // 用户id
 
 	fieldMap map[string]field.Expr
 }

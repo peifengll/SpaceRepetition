@@ -47,7 +47,7 @@ const toRegister = () => {
   <div class="center-grid">
     <form class="form">
       <p class="title">Register </p>
-      <p class="message">Signup now and get full access to our app. </p>
+      <p class="message">Signup now </p>
       <label>
         <input v-model="email" required placeholder="" type="email" class="input">
         <span>Email</span>

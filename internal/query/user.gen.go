@@ -52,17 +52,17 @@ type user struct {
 
 	ALL            field.Asterisk
 	ID             field.Int64
-	CreatedAt      field.Time
-	UpdatedAt      field.Time
+	CreatedAt      field.Time // 创建时间
+	UpdatedAt      field.Time // 更新时间
 	DeletedAt      field.Field
-	Gender         field.Int64
+	Gender         field.Int64 // 性别
 	Age            field.Int64
 	Password       field.String
-	HeadURL        field.String
+	HeadURL        field.String // 头像
 	Email          field.String
-	Username       field.String
+	Username       field.String // 登录的用户名
 	Introduction   field.String
-	Learnnumoneday field.Int64
+	Learnnumoneday field.Int64 // 一天学多少
 	UserID         field.String
 	Nickname       field.String
 

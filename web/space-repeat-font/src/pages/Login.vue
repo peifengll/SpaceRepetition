@@ -20,7 +20,6 @@
     </form>
 
   </div>
-  <h1>{{store.token}}</h1>
 </template>
 
 <script setup lang="ts">

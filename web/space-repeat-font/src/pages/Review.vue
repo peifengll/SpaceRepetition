@@ -168,7 +168,7 @@ const Op = (opt: number) => {
             </div>
             <div v-if="activeAnswer">
               <el-divider></el-divider>
-              {{ Decks[NowDeckId].cards[NowReviewId].font }}
+              {{ Decks[NowDeckId].cards[NowReviewId].back }}
             </div>
 
           </div>

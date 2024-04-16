@@ -102,3 +102,27 @@ CREATE TABLE `user`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- 管理员表，用于存储管理员信息
+CREATE TABLE admins
+(
+    id       INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE  NOT NULL,
+    password VARCHAR(100)        NOT NULL,
+    email    VARCHAR(100) UNIQUE NOT NULL,
+    name     VARCHAR(50)         NOT NULL,
+    phone    VARCHAR(20)         NOT NULL
+);
+
+
+
+
+-- 公告表，用于存储管理员发布的公告信息
+CREATE TABLE announcements
+(
+    id           INT PRIMARY KEY AUTO_INCREMENT,
+    admin_id     INT          NOT NULL,
+    title        VARCHAR(100) NOT NULL,
+    content      TEXT         NOT NULL,
+    publish_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES admins (id)
+);

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
@@ -133,12 +132,7 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 	}
 
 	var id v1.CardIdReq
-	fmt.Println("***********************")
 	err = ctx.BindJSON(&id)
-	fmt.Println("id", id)
-	fmt.Println(err)
-	fmt.Println("***********************")
-
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return

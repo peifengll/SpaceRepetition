@@ -1,7 +1,11 @@
 env: local
-http:
+http_font:
   host: 0.0.0.0
   port: 8000
+http_admin:
+  host: 0.0.0.0
+  port: 8011
+
 security:
   api_sign:
     app_key: 123456
@@ -12,8 +16,8 @@ data:
   mysql:
     user: root:peifeng@tcp(127.0.0.1:3306)/spacere?charset=utf8mb4&parseTime=True&loc=Local
   redis:
-    addr: 192.168.118.131:6379
-    password: "123456"
+    addr: peifeng.site:6379
+    password: ningzaichun
     db: 0
     read_timeout: 0.2s
     write_timeout: 0.2s

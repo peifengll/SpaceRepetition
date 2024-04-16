@@ -14,7 +14,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewHTTPServer(
+func NewHTTPServerFont(
 	logger *log.Logger,
 	conf *viper.Viper,
 	jwt *jwt.JWT,
@@ -24,13 +24,13 @@ func NewHTTPServer(
 	knowledgeHandler *handler.KnowledgeHandler,
 	recordHandler *handler.RecordHandler,
 	sectionHandler *handler.SectionHandler,
-) *http.Server {
+) *http.ServerFont {
 	gin.SetMode(gin.ReleaseMode)
-	s := http.NewServer(
+	s := http.NewServerFont(
 		gin.Default(),
 		logger,
-		http.WithServerHost(conf.GetString("http.host")),
-		http.WithServerPort(conf.GetInt("http.port")),
+		http.WithServerFontHost(conf.GetString("http_font.host")),
+		http.WithServerFontPort(conf.GetInt("http_font.port")),
 	)
 
 	// swagger doc
@@ -114,6 +114,41 @@ func NewHTTPServer(
 		}
 
 	}
+
+	return s
+}
+
+func NewHTTPServerAdmin(
+	logger *log.Logger,
+	conf *viper.Viper,
+	jwt *jwt.JWT,
+	userHandler *handler.UserHandler,
+	floderHandler *handler.FloderHandler,
+	deckHandler *handler.DeckHandler,
+	knowledgeHandler *handler.KnowledgeHandler,
+	recordHandler *handler.RecordHandler,
+	sectionHandler *handler.SectionHandler,
+) *http.ServerAdmin {
+	gin.SetMode(gin.ReleaseMode)
+	s := http.NewServerAdmin(
+		gin.Default(),
+		logger,
+		http.WithServerAdminHost(conf.GetString("http_admin.host")),
+		http.WithServerAdminPort(conf.GetInt("http_admin.port")),
+	)
+
+	s.Use(
+		middleware.CORSMiddleware(),
+		middleware.ResponseLogMiddleware(logger),
+		middleware.RequestLogMiddleware(logger),
+		//middleware.SignMiddleware(log),
+	)
+	s.GET("/", func(ctx *gin.Context) {
+		logger.WithContext(ctx).Info("hello")
+		apiV1.HandleSuccess(ctx, map[string]interface{}{
+			":)": "This is SpaceRepetition  Admin!",
+		})
+	})
 
 	return s
 }

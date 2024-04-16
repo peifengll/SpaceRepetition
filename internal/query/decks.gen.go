@@ -48,15 +48,15 @@ type deck struct {
 
 	ALL          field.Asterisk
 	ID           field.Int64
-	CreatedAt    field.Time
-	UpdatedAt    field.Time
+	CreatedAt    field.Time // 创建时间
+	UpdatedAt    field.Time // 更新时间
 	DeletedAt    field.Field
-	Name         field.String
-	Cardnum      field.Int64
-	Learnnumber  field.Int64
-	Introduction field.String
-	Floderid     field.Int64
-	UserID       field.String
+	Name         field.String // 牌组名
+	Cardnum      field.Int64  // 卡片数量
+	Learnnumber  field.Int64  // 在学习中数量
+	Introduction field.String // 简介
+	Floderid     field.Int64  // 文件夹id
+	UserID       field.String // 用户id
 
 	fieldMap map[string]field.Expr
 }
