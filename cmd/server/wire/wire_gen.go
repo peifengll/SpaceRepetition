@@ -52,7 +52,10 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	sectionService := service.NewSectionService(queryQuery, serviceService, sectionRepository)
 	sectionHandler := handler.NewSectionHandler(handlerHandler, sectionService)
 	serverFont := server.NewHTTPServerFont(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler)
-	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler)
+	adminRepository := repository.NewAdminRepository(repositoryRepository)
+	adminService := service.NewAdminService(serviceService, adminRepository)
+	adminHandler := handler.NewAdminHandler(handlerHandler, adminService)
+	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler, adminHandler)
 	job := server.NewJob(logger)
 	appApp := newApp(serverFont, serverAdmin, job)
 	return appApp, func() {
@@ -61,13 +64,13 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository, repository.NewDeckRepository, repository.NewKnowledgeRepository, repository.NewRecordRepository, repository.NewSectionRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository, repository.NewDeckRepository, repository.NewKnowledgeRepository, repository.NewRecordRepository, repository.NewSectionRepository, repository.NewAnnouncementsRepository, repository.NewAdminRepository)
 
 var querySet = wire.NewSet(query.NewQuery)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewFloderService, service.NewDeckService, service.NewKnowledgeService, service.NewRecordService, service.NewSectionService)
+var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewFloderService, service.NewDeckService, service.NewKnowledgeService, service.NewRecordService, service.NewSectionService, service.NewAnnouncementsService, service.NewAdminService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler, handler.NewDeckHandler, handler.NewKnowledgeHandler, handler.NewRecordHandler, handler.NewSectionHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler, handler.NewDeckHandler, handler.NewKnowledgeHandler, handler.NewRecordHandler, handler.NewSectionHandler, handler.NewAdminHandler, handler.NewAnnouncementsHandler)
 
 var serverSet = wire.NewSet(server.NewHTTPServerFont, server.NewHTTPServerAdmin, server.NewJob, server.NewTask)
 

@@ -29,6 +29,8 @@ var repositorySet = wire.NewSet(
 	repository.NewKnowledgeRepository,
 	repository.NewRecordRepository,
 	repository.NewSectionRepository,
+	repository.NewAnnouncementsRepository,
+	repository.NewAdminRepository,
 )
 
 var querySet = wire.NewSet(
@@ -43,6 +45,8 @@ var serviceSet = wire.NewSet(
 	service.NewKnowledgeService,
 	service.NewRecordService,
 	service.NewSectionService,
+	service.NewAnnouncementsService,
+	service.NewAdminService,
 )
 
 var handlerSet = wire.NewSet(
@@ -53,6 +57,8 @@ var handlerSet = wire.NewSet(
 	handler.NewKnowledgeHandler,
 	handler.NewRecordHandler,
 	handler.NewSectionHandler,
+	handler.NewAdminHandler,
+	handler.NewAnnouncementsHandler,
 )
 
 var serverSet = wire.NewSet(

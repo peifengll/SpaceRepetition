@@ -128,6 +128,7 @@ func NewHTTPServerAdmin(
 	knowledgeHandler *handler.KnowledgeHandler,
 	recordHandler *handler.RecordHandler,
 	sectionHandler *handler.SectionHandler,
+	adminHandler *handler.AdminHandler,
 ) *http.ServerAdmin {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServerAdmin(
@@ -149,6 +150,14 @@ func NewHTTPServerAdmin(
 			":)": "This is SpaceRepetition  Admin!",
 		})
 	})
+	noAuthRouter := s.Group("admin/")
+	{
+		noAuthRouter.POST("/login", adminHandler.Login)
+		AuthRouter := noAuthRouter.Group("").Use(middleware.StrictAuth(jwt, logger))
+		{
+			AuthRouter.POST("/register", adminHandler.Register)
+		}
+	}
 
 	return s
 }

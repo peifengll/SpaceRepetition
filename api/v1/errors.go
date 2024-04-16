@@ -15,4 +15,6 @@ var (
 	ErrNoAccessAddDeck      = newError(1004, "The floder is not belong you. You can't add deck to it.")
 	ErrNoAccessGetDecks     = newError(1005, "This deck is not belong you")
 	ErrNoAccessDeleteDeck   = newError(1006, "The deck is not belong you. Please  check.")
+	ErrUsernameAlreadyUse   = newError(1007, "The username is already in use.")
+	ErrPrivileges           = newError(1008, "your Privileges is not enough ,can't  finish op")
 )
