@@ -43,8 +43,48 @@ func (s *sectionService) AddSection(v *v1.SectionReq, id string) error {
 }
 
 func (s *sectionService) DeleteSectionById(id int64) error {
-	_, err := s.query.Section.Where(s.query.Section.ID.Eq(id)).Delete()
-	return err
+	tx := s.query.Begin()
+	cards, err := tx.Knowledge.Where(tx.Knowledge.Sectionid.Eq(id)).Find()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	section, err := tx.Section.Where(tx.Section.ID.Eq(id)).First()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	deckid := section.Deckid
+	// 删除卡片 ，更改数量
+	num := len(cards)
+	// 更改数量
+	_, err = tx.Deck.Where(tx.Deck.ID.Eq(deckid)).UpdateSimple(tx.Deck.Cardnum.Sub(int64(num)))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	// 删除复习记录
+	for _, v := range cards {
+		err = delRecordTx(v.ID, tx)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	_, err = tx.Knowledge.Where(tx.Knowledge.Sectionid.Eq(id)).Delete()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.Section.Where(s.query.Section.ID.Eq(id)).Delete()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	//1.  删除章节下的卡片
+	//2.  更改deck的数量
+	//3.  删除卡片的记录
+	return tx.Commit()
 }
 
 func (s *sectionService) UpdateSectionName(id int64, name string) error {

@@ -10,7 +10,7 @@ const TableNameAdmin = "admins"
 type Admin struct {
 	ID         int64  `gorm:"column:id;type:int;primaryKey;autoIncrement:true" json:"id,string"`
 	Username   string `gorm:"column:username;type:varchar(50);not null" json:"username"`
-	Password   string `gorm:"column:password;type:varchar(100);not null" json:"password,omitempty"`
+	Password   string `gorm:"column:password;type:varchar(100);not null" json:"password"`
 	Email      string `gorm:"column:email;type:varchar(100);not null" json:"email"`
 	Name       string `gorm:"column:name;type:varchar(50);not null" json:"name"`
 	Phone      string `gorm:"column:phone;type:varchar(20);not null" json:"phone"`

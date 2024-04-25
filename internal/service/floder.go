@@ -44,8 +44,25 @@ func (s *floderService) AddFloder(userid string, name string) error {
 }
 
 func (s *floderService) DeleteFloder(id int64) error {
-	_, err := s.query.Floder.Where(s.query.Floder.ID.Eq(id)).Delete()
-	return err
+	tx := s.query.Begin()
+	decks, err := tx.Deck.Where(tx.Deck.Floderid.Eq(id)).Find()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	for _, v := range decks {
+		err = deleteDeckAndCard(v.ID, tx)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	_, err = s.query.Floder.Where(tx.Floder.ID.Eq(id)).Delete()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
 }
 func (s *floderService) CheckAccess(id int64, userid string) (bool, error) {
 	first, err := s.query.Floder.Where(s.query.Floder.ID.Eq(id)).First()

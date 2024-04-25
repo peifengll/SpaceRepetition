@@ -51,7 +51,28 @@ func (s *knowledgeService) AddCard(v *v1.CardRequest, userid string) error {
 		Sectionid:  v.Sectionid,
 		UserID:     userid,
 	}
-	return s.query.Knowledge.Create(cc)
+	tx := s.query.Begin()
+	defer func() {
+		if err := recover(); err != nil {
+			tx.Rollback()
+		}
+	}()
+	err := tx.Knowledge.Create(cc)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.Deck.Where(tx.Deck.ID.Eq(cc.Deckid)).UpdateSimple(tx.Deck.Cardnum.Add(1))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.Section.Where(tx.Section.ID.Eq(cc.Sectionid)).UpdateSimple(tx.Section.CardNum.Add(1))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
 }
 
 func (s *knowledgeService) GetKnowledgeById(id int64) (*v1.CardResp, error) {
@@ -90,11 +111,33 @@ func (s *knowledgeService) UpdateCard(v *v1.CardRequest) error {
 }
 
 func (s *knowledgeService) DeleteCard(id int64) error {
-	_, err := s.query.Knowledge.Where(s.query.Knowledge.ID.Eq(id)).Delete()
+	deck, err := s.query.Knowledge.Where(s.query.Knowledge.ID.Eq(id)).First()
 	if err != nil {
 		return err
 	}
-	return nil
+	tx := s.query.Begin()
+	_, err = tx.Section.Where(tx.Section.ID.Eq(deck.Sectionid)).UpdateSimple(tx.Section.CardNum.Sub(1))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.Deck.Where(tx.Deck.ID.Eq(deck.Deckid)).UpdateSimple(tx.Deck.Cardnum.Sub(1))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	// 删除记录
+	_, err = tx.Record.Where(tx.Record.KnowledgeID.Eq(id)).Delete()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = s.query.Knowledge.Where(s.query.Knowledge.ID.Eq(id)).Delete()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
 }
 
 // 这个就默认是搜索这个用户所有的了

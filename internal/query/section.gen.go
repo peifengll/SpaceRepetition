@@ -34,6 +34,7 @@ func newSection(db *gorm.DB, opts ...gen.DOOption) section {
 	_section.Deckid = field.NewInt64(tableName, "deckid")
 	_section.Name = field.NewString(tableName, "name")
 	_section.UserID = field.NewString(tableName, "user_id")
+	_section.CardNum = field.NewInt64(tableName, "card_num")
 
 	_section.fillFieldMap()
 
@@ -51,6 +52,7 @@ type section struct {
 	Deckid    field.Int64
 	Name      field.String
 	UserID    field.String // 属于哪一个用户
+	CardNum   field.Int64  // 章节下卡片的数量
 
 	fieldMap map[string]field.Expr
 }
@@ -74,6 +76,7 @@ func (s *section) updateTableName(table string) *section {
 	s.Deckid = field.NewInt64(table, "deckid")
 	s.Name = field.NewString(table, "name")
 	s.UserID = field.NewString(table, "user_id")
+	s.CardNum = field.NewInt64(table, "card_num")
 
 	s.fillFieldMap()
 
@@ -90,7 +93,7 @@ func (s *section) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *section) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
+	s.fieldMap = make(map[string]field.Expr, 8)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
@@ -98,6 +101,7 @@ func (s *section) fillFieldMap() {
 	s.fieldMap["deckid"] = s.Deckid
 	s.fieldMap["name"] = s.Name
 	s.fieldMap["user_id"] = s.UserID
+	s.fieldMap["card_num"] = s.CardNum
 }
 
 func (s section) clone(db *gorm.DB) section {

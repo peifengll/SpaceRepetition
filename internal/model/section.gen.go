@@ -21,6 +21,7 @@ type Section struct {
 	Deckid    int64          `gorm:"column:deckid;type:bigint;not null" json:"deckid"`
 	Name      string         `gorm:"column:name;type:longtext" json:"name"`
 	UserID    string         `gorm:"column:user_id;type:varchar(191);not null;comment:属于哪一个用户" json:"userId"` // 属于哪一个用户
+	CardNum   int64          `gorm:"column:card_num;type:int;not null;comment:章节下卡片的数量" json:"cardNum"`       // 章节下卡片的数量
 }
 
 // TableName Section's table name

@@ -99,7 +99,22 @@ func (s *deckService) CheckAddDeckAccess(floderid int64, id string) (bool, error
 }
 
 func (s *deckService) AddDeck(de *model.Deck) error {
-	return s.query.Deck.Create(de)
+	tx := s.query.Begin()
+	err := tx.Deck.Create(de)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = tx.Floder.Where(tx.Floder.ID.Eq(de.Floderid)).UpdateSimple(tx.Floder.Decknum.Add(1))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *deckService) CheckDeckAccess(iid int64, id string) (bool, error) {
@@ -123,9 +138,35 @@ func (s *deckService) UpdateDeck(deck *model.Deck) error {
 }
 
 func (s *deckService) DeleteDeck(id int64) error {
-	_, err := s.query.Deck.Where(s.query.Deck.ID.Eq(id)).Delete()
+	tx := s.query.Begin()
+	err := deleteDeckAndCard(id, tx)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
+}
+
+// 删除下边所有卡片,然后删除牌组
+func deleteDeckAndCard(id int64, tx *query.QueryTx) error {
+	first, err := tx.Deck.Where(tx.Deck.ID.Eq(id)).First()
 	if err != nil {
 		return err
 	}
-	return nil
+	flowerId := first.Floderid
+	_, err = tx.Knowledge.Where(tx.Knowledge.Deckid.Eq(id)).Delete()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Section.Where(tx.Section.Deckid.Eq(id)).Delete()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Deck.Where(tx.Deck.ID.Eq(id)).Delete()
+	if err != nil {
+		return err
+	}
+	// 牌组删掉了，数量减一个
+	_, err = tx.Floder.Where(tx.Floder.ID.Eq(flowerId)).UpdateSimple(tx.Floder.Decknum.Sub(1))
+	return err
 }
