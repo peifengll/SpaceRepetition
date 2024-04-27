@@ -39,7 +39,7 @@ func (s *deckService) GetDeckAll(id int64) (*v1.DeckCardResp, error) {
 	}
 	res := &v1.DeckCardResp{
 		ID:           id,
-		Name:         first.Introduction,
+		Name:         first.Name,
 		Introduction: first.Introduction,
 	}
 	// 查询所有属于这个deck的section

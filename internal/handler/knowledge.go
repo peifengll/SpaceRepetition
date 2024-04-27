@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -137,11 +136,17 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
-	iid, err := strconv.Atoi(id.Id)
+	// 如果已经复习了，复习个蛋
+	review, err := h.knowledgeService.CheckReview(id.Id)
 	if err != nil {
-		log.Println("转化:::", err)
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
 	}
-	err = h.knowledgeService.ChooseToReview(int64(iid), userId)
+	if review {
+		v1.HandleSuccess(ctx, "这条已经加入复习了")
+		return
+	}
+	err = h.knowledgeService.ChooseToReview(id.Id, userId)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return

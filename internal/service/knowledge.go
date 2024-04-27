@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	//"github.com/open-spaced-repetition/go-fsrs"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"github.com/peifengll/SpaceRepetition/internal/query"
@@ -20,6 +19,7 @@ type KnowledgeService interface {
 	SearchCards(content string, userId string) ([]*v1.CardResp, error)
 	ChooseToReview(ids int64, userId string) error
 	GetAllReview(id string) ([]v1.DeckCardReviewResp, error)
+	CheckReview(id int64) (bool, error)
 	ReviewOp(t *v1.CardReviewOptReq, userid string) (bool, error)
 }
 
@@ -172,6 +172,14 @@ func (s *knowledgeService) SearchCards(content string, userId string) ([]*v1.Car
 	}
 	return cards, nil
 }
+func (s *knowledgeService) CheckReview(id int64) (bool, error) {
+	kno := s.query.Knowledge
+	first, err := kno.Where(kno.ID.Eq(id)).First()
+	if err != nil {
+		return false, err
+	}
+	return first.Onlearning == 1, nil
+}
 
 // 先获取id列表
 // 将所有的id对应的card的onlearn更新为在学习，
@@ -183,8 +191,17 @@ func (s *knowledgeService) ChooseToReview(id int64, userId string) error {
 	//	这里要用事务来做，全部都开始复习
 	q := s.query
 	q.Transaction(func(tx *query.Query) error {
+		po, err := tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).First()
+		if err != nil {
+			return err
+		}
 		// 第一步 更新为onlearning
-		_, err := tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).Update(tx.Knowledge.Onlearning, 1)
+		_, err = tx.Knowledge.Where(tx.Knowledge.ID.Eq(id)).Update(tx.Knowledge.Onlearning, 1)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Deck.Where(tx.Deck.ID.Eq(po.Deckid)).UpdateSimple(tx.Deck.Learnnumber.Add(1))
 		if err != nil {
 			return err
 		}
