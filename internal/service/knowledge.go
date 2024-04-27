@@ -126,6 +126,13 @@ func (s *knowledgeService) DeleteCard(id int64) error {
 		tx.Rollback()
 		return err
 	}
+	if deck.Onlearning == 1 {
+		_, err = tx.Deck.Where(tx.Deck.ID.Eq(deck.Deckid)).UpdateSimple(tx.Deck.Learnnumber.Sub(1))
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
 	// 删除记录
 	_, err = tx.Record.Where(tx.Record.KnowledgeID.Eq(id)).Delete()
 	if err != nil {

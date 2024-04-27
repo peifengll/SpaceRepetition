@@ -57,12 +57,27 @@ func (s *sectionService) DeleteSectionById(id int64) error {
 	deckid := section.Deckid
 	// 删除卡片 ，更改数量
 	num := len(cards)
-	// 更改数量
+	// 更改卡片数量
 	_, err = tx.Deck.Where(tx.Deck.ID.Eq(deckid)).UpdateSimple(tx.Deck.Cardnum.Sub(int64(num)))
+	// 学习数量呢
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+
+	// 获取要复习的卡片的数量
+	onLearnNumberBySectionId, err := s.sectionRepository.GetOnLearnNumberBySectionId(id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	// 在这里减去
+	_, err = tx.Deck.Where(tx.Deck.ID.Eq(deckid)).UpdateSimple(tx.Deck.Learnnumber.Sub(onLearnNumberBySectionId))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	// 删除复习记录
 	for _, v := range cards {
 		err = delRecordTx(v.ID, tx)
