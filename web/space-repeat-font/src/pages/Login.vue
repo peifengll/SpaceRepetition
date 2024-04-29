@@ -25,7 +25,7 @@
 <script setup lang="ts">
 // import { ElMessage } from 'element-plus'
 
-import request from "../utils/request.ts";
+import request, { SelfUrl } from "../utils/request.ts";
 import useStore from "../stores";
 
 const email = ref('');
@@ -49,7 +49,8 @@ const getLoginData = () => {
         type: 'success',
       })
       store.token=res.data.data.accessToken
-      console.log("走，去其他页面")
+      window.location.href=SelfUrl
+      // console.log("走，去其他页面")
     }
   }).catch(error => {
     console.log(error)

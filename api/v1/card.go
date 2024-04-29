@@ -32,16 +32,16 @@ type CardIdReq struct {
 
 type CardReviewResp struct {
 	ID         int64  `gorm:"column:id;type:bigint unsigned;primaryKey;autoIncrement:true" json:"id"`
-	RecordID   int64  `gorm:"column:record_id" json:"record_id,string"`
+	RecordID   int64  `gorm:"column:record_id" json:"record_id"`
 	Font       string `gorm:"column:font;type:longtext" json:"font"`
 	Originfont string `gorm:"column:originfont;type:longtext" json:"originfont"`
 	Back       string `gorm:"column:back;type:longtext" json:"back"`
-	DeckID     int64  `gorm:"column:deckid" json:"deckid,string"`
+	DeckID     int64  `gorm:"column:deckid" json:"deckid"`
 	Typeof     int64  `gorm:"column:typeof;type:bigint" json:"typeof"`
 }
 
 type CardReviewOptReq struct {
-	RecordID int64       `json:"record_id,string"`
+	RecordID int64       `json:"record_id"`
 	ID       int64       `json:"id"`
 	Opt      fsrs.Rating `json:"opt"`
 }

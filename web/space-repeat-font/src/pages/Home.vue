@@ -314,7 +314,7 @@ const toEditor=(row:any)=>{
         <el-table :data="item.decks" style="width: 100%" :key="item.name"  @row-click="toEditor" >
           <el-table-column prop="name" label="牌组名" width="180"/>
           <el-table-column prop="cardnum" label="卡片数" width="180"/>
-          <el-table-column prop="learnnumber" label="已学习个数" width="180"/>
+          <el-table-column prop="learnnumber" label="已加入复习个数" width="180"/>
           <el-table-column prop="introduction" label="简介"/>
 
         </el-table>

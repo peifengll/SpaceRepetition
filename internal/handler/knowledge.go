@@ -180,10 +180,10 @@ func (h *KnowledgeHandler) ReviewOpt(ctx *gin.Context) {
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 	}
-	finished, err := h.knowledgeService.ReviewOp(&t, userId)
+	recordId, err := h.knowledgeService.ReviewOp(&t, userId)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
-	v1.HandleSuccess(ctx, map[string]bool{"finished": finished})
+	v1.HandleSuccess(ctx, map[string]any{"finished": recordId == 0, "rid": recordId})
 }

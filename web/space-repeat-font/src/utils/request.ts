@@ -9,8 +9,8 @@ export const SelfUrl:string= 'http://localhost:5173/'
 // import {stringify} from "querystring";
 // 创建 axios 实例
 const request = axios.create({
-    baseURL: 'http://peifeng.site:8003/'
-    // baseURL: 'http://127.0.0.1:8003/'
+    // baseURL: 'http://peifeng.site:8003/'
+    baseURL: 'http://127.0.0.1:8000/'
 })
 
 // 请求拦截器
@@ -21,7 +21,10 @@ request.interceptors.request.use(function (config) {
     if (lj.token != "") {
         config.headers.Authorization = "Bearer " + lj.token
     } else {
-        ElMessage.error("你还没有登录")
+        ElMessage.error("你还没有登录,请先登陆")
+        setTimeout(() => {
+            window.location.href=SelfUrl+'login'
+          }, 1500); 
     }
     return config
 }, function (error) {

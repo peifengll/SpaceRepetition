@@ -472,7 +472,7 @@ const CheckOn = (id: number) => {
 
 const AddToReview = (id: number) => {
   request.put("/v1/decks/card/toreview", {
-    id: id,
+    id: parseInt(id),
   }).then((res) => {
     ElMessage({
       type: 'success',

@@ -36,24 +36,22 @@ func (r *knowledgeRepository) GetAllReviewCard(userid string) ([]v1.DeckCardRevi
 		return nil, err
 	}
 	sql := `
-SELECT
-	k.id,
-	r.id AS record_id,
-	k.font,
-	k.originfont,
-	k.back ,
-	k.deckid,
-	k.typeof
-FROM
-	knowledge k
-	LEFT JOIN record r ON k.id = r.knowledge_id 
-WHERE
-	DATE( r.Due ) <= CURDATE() and r.on=1
-ORDER BY
-	k.deckid 
+	SELECT k.id,
+		   r.id AS record_id,
+		   k.font,
+		   k.originfont,
+		   k.back,
+		   k.deckid,
+		   k.typeof
+	FROM knowledge k
+			 LEFT JOIN record r ON k.id = r.knowledge_id
+	WHERE DATE(r.Due) <= CURDATE()
+	  and r.on = 1
+	  and k.user_id = ?
+	ORDER BY k.deckid
 `
 	var cards []*v1.CardReviewResp
-	err = r.db.Raw(sql).Find(&cards).Error
+	err = r.db.Raw(sql, userid).Find(&cards).Error
 	if err != nil {
 		r.logger.Error(err.Error())
 		return nil, err

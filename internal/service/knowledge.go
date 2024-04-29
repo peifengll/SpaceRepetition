@@ -20,7 +20,7 @@ type KnowledgeService interface {
 	ChooseToReview(ids int64, userId string) error
 	GetAllReview(id string) ([]v1.DeckCardReviewResp, error)
 	CheckReview(id int64) (bool, error)
-	ReviewOp(t *v1.CardReviewOptReq, userid string) (bool, error)
+	ReviewOp(t *v1.CardReviewOptReq, userid string) (int64, error)
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
@@ -241,15 +241,15 @@ func (s *knowledgeService) GetAllReview(id string) ([]v1.DeckCardReviewResp, err
 }
 
 // 进行一次复习计算，算出时间间隔，并更新到数据库
-func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (bool, error) {
+func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (int64, error) {
 	p := fsrs.DefaultParam()
 	// 先就用这个默认的
 	p.W = fsrs.DefaultWeights()
 	q := s.query
 	record, err := q.Record.Where(q.Record.KnowledgeID.Eq(t.ID), q.Record.On.Eq(1)).First()
-	fmt.Printf("%#v\n", record)
+	//fmt.Printf("%#v\n", record)
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 	q.Knowledge.Where(q.Knowledge.ID.Eq(t.ID))
 	card := fsrs.Card{
@@ -294,12 +294,12 @@ func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (bool
 		return nil
 	})
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 	if isToday(newRecord.Due) {
-		return true, nil
+		return newRecord.ID, nil
 	}
-	return false, nil
+	return 0, nil
 }
 
 func isToday(t time.Time) bool {
