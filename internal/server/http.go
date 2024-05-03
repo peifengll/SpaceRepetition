@@ -88,6 +88,7 @@ func NewHTTPServerFont(
 
 			//	跟牌组
 			decks.POST("/deck", deckHandler.AddDeck)
+			//decks.GET("/deck/search", deckHandler.AddDeck)
 			decks.GET("/deck/:id", deckHandler.GetDeckById)
 			decks.PUT("/deck", deckHandler.UpdateDeck)
 			decks.DELETE("/deck/:id", deckHandler.DeleteDeck)

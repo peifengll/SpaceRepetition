@@ -36,7 +36,38 @@
   </el-button>
 
   <el-drawer v-model="drawer" title="I am the title" :with-header="false">
-    <span>Hi there!</span>
+    <el-form :model="form" label-width="auto" style="max-width: 600px" label-position="left">
+    <el-form-item label="用户名">
+      <el-input v-model="form.name" />
+    </el-form-item>
+    <el-form-item label="性别">
+      <el-select v-model="form.gender" placeholder="please select your gender">
+        <el-option label="男" value=1 />
+        <el-option label="女" value=2 />
+      </el-select>
+    </el-form-item>
+   
+    <el-form-item label="年龄" prop="age">
+      <el-input  v-model.number="form.age" oninput="value=value.replace(/[^\d.]/g,'')" />
+    </el-form-item>
+    <el-form-item label="最大复习间隔" prop="interval">
+      <el-input  v-model.number="form.interval" oninput="value=value.replace(/[^\d.]/g,'')" />
+    </el-form-item>
+    <el-form-item label="回忆成功的概率" prop="request_retention">
+      <el-input  v-model.number="form.request_retention" oninput="value=value.replace(/[^\d.]/g,'')" />
+    </el-form-item>
+    
+    <el-form-item label="复习参数">
+      <el-input v-model="form.reviewparms" />
+    </el-form-item>
+    <el-form-item label="个性签名">
+      <el-input v-model="form.introduction" type="textarea" />
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="onSubmit">Create</el-button>
+      <el-button>Cancel</el-button>
+    </el-form-item>
+  </el-form>
   </el-drawer>
 </template>
 
@@ -49,7 +80,7 @@ const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
-import {SelfUrl}from '@/utils/request.ts'
+import request,{SelfUrl}from '@/utils/request.ts'
 import {ElMessage, ElMessageBox} from "element-plus";
 import useStore from "../../stores";
 const toHomeIndex = () => {
@@ -60,6 +91,54 @@ const toHomeIndex = () => {
 onBeforeMount(() => {
   console.log("组件挂载前");
 });
+
+import { reactive } from 'vue'
+
+// do not use same name with ref
+const form = reactive({
+  gender:'',
+  name: '',
+  introduction:'',
+  age:'',
+  interval:'',
+  reviewparms:'',
+  request_retention:'',
+})
+
+const onSubmit = () => {
+  console.log("form.name",form.name)
+  console.log("form.gender",form.gender)
+  console.log("form.introduction",form.introduction)
+  console.log("form.age",form.age)
+  console.log("form.interval",form.interval)
+  console.log("form.reviewparms",form.reviewparms)
+  console.log("form.request_retention",form.request_retention)
+
+  request.put("/v1/user", {
+    gender:Number(form.gender) ,
+    age: Number(form.age) ,
+    username:form.name,
+    introduction:form.introduction,
+    maxInterval:Number(form.interval)  ,
+    weights:form.reviewparms,
+    requestRetention:  parseFloat(form.request_retention),
+  }).then(res => {
+    console.log(res)
+    if (res.status == 200) {
+      console.log(res.data.data.accessToken)
+      ElMessage({
+        showClose: true,
+        message: '修改成功',
+        type: 'success',
+      })
+    }
+  }).catch(error => {
+    console.log(error)
+    ElMessage.error('修改失败'+error)
+
+  })
+
+}
 
 
 const loginOut = () => {

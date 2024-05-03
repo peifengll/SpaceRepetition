@@ -41,6 +41,9 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Learnnumoneday = field.NewInt64(tableName, "learnnumoneday")
 	_user.UserID = field.NewString(tableName, "user_id")
 	_user.Nickname = field.NewString(tableName, "nickname")
+	_user.MaxInterval = field.NewInt64(tableName, "max_interval")
+	_user.Weights = field.NewString(tableName, "weights")
+	_user.RequestRetention = field.NewFloat32(tableName, "request_retention")
 
 	_user.fillFieldMap()
 
@@ -50,21 +53,24 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 type user struct {
 	userDo
 
-	ALL            field.Asterisk
-	ID             field.Int64
-	CreatedAt      field.Time // 创建时间
-	UpdatedAt      field.Time // 更新时间
-	DeletedAt      field.Field
-	Gender         field.Int64 // 性别
-	Age            field.Int64
-	Password       field.String
-	HeadURL        field.String // 头像
-	Email          field.String
-	Username       field.String // 登录的用户名
-	Introduction   field.String
-	Learnnumoneday field.Int64 // 一天学多少
-	UserID         field.String
-	Nickname       field.String
+	ALL              field.Asterisk
+	ID               field.Int64
+	CreatedAt        field.Time // 创建时间
+	UpdatedAt        field.Time // 更新时间
+	DeletedAt        field.Field
+	Gender           field.Int64 // 性别
+	Age              field.Int64
+	Password         field.String
+	HeadURL          field.String // 头像
+	Email            field.String
+	Username         field.String // 登录的用户名
+	Introduction     field.String
+	Learnnumoneday   field.Int64 // 一天学多少
+	UserID           field.String
+	Nickname         field.String
+	MaxInterval      field.Int64   // 最大复习间隔，超过这个就算复习完成（推荐365） 默认365
+	Weights          field.String  // 复习计算需要的参数
+	RequestRetention field.Float32 // 想要下次见到一张卡片时，回忆起的概率（推荐70%~90%,默认90%）
 
 	fieldMap map[string]field.Expr
 }
@@ -95,6 +101,9 @@ func (u *user) updateTableName(table string) *user {
 	u.Learnnumoneday = field.NewInt64(table, "learnnumoneday")
 	u.UserID = field.NewString(table, "user_id")
 	u.Nickname = field.NewString(table, "nickname")
+	u.MaxInterval = field.NewInt64(table, "max_interval")
+	u.Weights = field.NewString(table, "weights")
+	u.RequestRetention = field.NewFloat32(table, "request_retention")
 
 	u.fillFieldMap()
 
@@ -111,7 +120,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 14)
+	u.fieldMap = make(map[string]field.Expr, 17)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
@@ -126,6 +135,9 @@ func (u *user) fillFieldMap() {
 	u.fieldMap["learnnumoneday"] = u.Learnnumoneday
 	u.fieldMap["user_id"] = u.UserID
 	u.fieldMap["nickname"] = u.Nickname
+	u.fieldMap["max_interval"] = u.MaxInterval
+	u.fieldMap["weights"] = u.Weights
+	u.fieldMap["request_retention"] = u.RequestRetention
 }
 
 func (u user) clone(db *gorm.DB) user {

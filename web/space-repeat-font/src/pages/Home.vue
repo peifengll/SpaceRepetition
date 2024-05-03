@@ -258,7 +258,7 @@ const toEditor=(row:any)=>{
     <el-container style="height: 50px">
       <el-container>
         <el-aside style="overflow: hidden" width="500px">
-          <el-input
+          <!-- <el-input
               v-model="input3"
               placeholder="搜索牌组"
               class="input-with-select"
@@ -267,7 +267,7 @@ const toEditor=(row:any)=>{
             <template #append>
               <el-button :icon="Search"/>
             </template>
-          </el-input>
+          </el-input> -->
 
           <!--          <robot-switch style="width: 40px; height: auto" ></robot-switch>-->
         </el-aside>
@@ -351,7 +351,7 @@ const toEditor=(row:any)=>{
         </el-table>
       </el-tab-pane>
 
-    </el-tabs>
+    </el-tabs>  
     <!--    <el-divider/>-->
 
   </div>

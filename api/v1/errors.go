@@ -17,4 +17,6 @@ var (
 	ErrNoAccessDeleteDeck   = newError(1006, "The deck is not belong you. Please  check.")
 	ErrUsernameAlreadyUse   = newError(1007, "The username is already in use.")
 	ErrPrivileges           = newError(1008, "your Privileges is not enough ,can't  finish op")
+
+	WeightsNotStand = newError(1009, "your weight is bad")
 )

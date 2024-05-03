@@ -15,6 +15,7 @@ type UserService interface {
 	Login(ctx context.Context, req *v1.LoginRequest) (string, error)
 	GetProfile(ctx context.Context, userId string) (*v1.GetProfileResponseData, error)
 	UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error
+	UpdateUserInfos(ctx context.Context, userId string, req *v1.UserUpdateReq) error
 }
 
 func NewUserService(que *query.Query, service *Service, userRepo repository.UserRepository) UserService {
@@ -103,6 +104,39 @@ func (s *userService) UpdateProfile(ctx context.Context, userId string, req *v1.
 	user.Email = req.Email
 	user.Nickname = req.Nickname
 
+	if err = s.userRepo.Update(ctx, user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *userService) UpdateUserInfos(ctx context.Context, userId string, req *v1.UserUpdateReq) error {
+	user, err := s.userRepo.GetByID(ctx, userId)
+	if err != nil {
+		return err
+	}
+	if req.Gender != 0 {
+		user.Gender = req.Gender
+	}
+	if req.Age != 0 {
+		user.Age = req.Age
+	}
+	if req.Username != "" {
+		user.UserID = req.Username
+	}
+	if req.Introduction != "" {
+		user.Introduction = req.Introduction
+	}
+	if req.MaxInterval != 0 {
+		user.MaxInterval = req.MaxInterval
+	}
+	if req.Weights != "" {
+		user.Weights = req.Weights
+	}
+	if req.RequestRetention != 0 {
+		user.RequestRetention = req.RequestRetention
+	}
 	if err = s.userRepo.Update(ctx, user); err != nil {
 		return err
 	}

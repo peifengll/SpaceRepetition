@@ -1,5 +1,11 @@
 package convert
 
+import (
+	"log"
+	"regexp"
+	"strconv"
+)
+
 const (
 	base62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
@@ -21,4 +27,22 @@ func IntToBase62(n int) string {
 	}
 
 	return string(result)
+}
+
+func ParseStringToFloatSlice(s string) ([]float64, error) {
+	// 使用正则表达式匹配数字和小数点
+	re := regexp.MustCompile(`\d+\.\d+|\d+`)
+	matches := re.FindAllString(s, -1)
+
+	// 将匹配到的字符串转换为浮点数并添加到切片中
+	floatSlice := make([]float64, len(matches))
+	for i, match := range matches {
+		f, err := strconv.ParseFloat(match, 64)
+		if err != nil {
+			log.Println("Error:", err)
+			return nil, err
+		}
+		floatSlice[i] = f
+	}
+	return floatSlice, nil
 }

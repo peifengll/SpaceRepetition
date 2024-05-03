@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
+	"github.com/peifengll/SpaceRepetition/pkg/helper/convert"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -102,13 +103,24 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
 
-	var req v1.UpdateProfileRequest
+	var req v1.UserUpdateReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
-
-	if err := h.userService.UpdateProfile(ctx, userId, &req); err != nil {
+	// 如果weights不为空，必须要检查一下能否解析为 合法的参数
+	if req.Weights != "" {
+		slice, err := convert.ParseStringToFloatSlice(req.Weights)
+		if err != nil {
+			v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
+			return
+		}
+		if len(slice) != 17 {
+			v1.HandleError(ctx, http.StatusBadRequest, v1.WeightsNotStand, nil)
+			return
+		}
+	}
+	if err := h.userService.UpdateUserInfos(ctx, userId, &req); err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)
 		return
 	}

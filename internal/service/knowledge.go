@@ -242,6 +242,7 @@ func (s *knowledgeService) GetAllReview(id string) ([]v1.DeckCardReviewResp, err
 
 // 进行一次复习计算，算出时间间隔，并更新到数据库
 func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (int64, error) {
+	// todo 每个用户都应该有自己的 回忆成功概率， 80 到 90 之间最好在
 	p := fsrs.DefaultParam()
 	// 先就用这个默认的
 	p.W = fsrs.DefaultWeights()
