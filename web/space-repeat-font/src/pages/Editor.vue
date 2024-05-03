@@ -133,13 +133,13 @@
             </el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>View</el-dropdown-item>
-                <el-dropdown-item>Add</el-dropdown-item>
-                <el-dropdown-item>Delete</el-dropdown-item>
+                <el-dropdown-item :onclick="alertIntr">修改简介</el-dropdown-item>
+                <el-dropdown-item  :onclick="alertDeckName">修改牌组名</el-dropdown-item>
+                <el-dropdown-item  :onclick="delDeck">删除牌组</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span>Tom</span>
+          <span>操作</span>
         </div>
       </el-header>
 
@@ -194,9 +194,161 @@ const tableData = ref(Array.from({length: 20}).fill(item))
 import {defineProps} from 'vue';
 import {Console} from "inspector";
 import {ElMessage, ElMessageBox} from "element-plus";
+import { SelfUrl } from '../utils/request';
+
 
 const deckId = defineProps(['id']);
+const alertIntr = ()=>{
+  console.log(deckId.id)
+  open3(deckId.id)
+  console.log("666")
+}
+const alertDeckName = ()=>{
+  console.log(deckId.id)
+  open4(deckId.id)
+  console.log("666")
+}
+
+const delDeck = ()=>{
+  console.log(deckId.id)
+  open2(deckId.id)
+  console.log("666")
+}
+
+
+
 const sections = ref([])
+
+
+const open2 = (id: number) => {
+  //  删除牌组
+  ElMessageBox.confirm(
+      '确定删除此牌组吗（删除之后词牌组所有记录均会被删除，该过程不可逆）',
+      '删除牌组',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        center: true,
+      }
+  )
+      .then(() => {
+        console.log(id)
+        request.delete("/v1/decks/deck/" + id).then((res:any) => {
+          if (res.data.code == 0) {
+            console.log(res.data)
+            ElMessage({
+              type: 'success',
+              message: '删除成功',
+            })
+            window.location.href=SelfUrl
+            return
+          }
+
+        }).catch((res:any) => {
+          ElMessage({
+            type: 'error',
+            message: '删除失败:'+res.toString(),
+          })
+        })
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: 'Delete canceled',
+        })
+      })
+}
+
+//  修改牌组简介对应的
+const open3 = (id: number) => {
+  ElMessageBox.prompt('输入新简介', '修改简介', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    center: true,
+
+  }).then(({value}) => {
+        if (value == null ||value=="") {
+          ElMessage({
+            type: 'info',
+            message: '未检测到输入，更改未进行',
+          })
+          return
+        }
+        console.log("val: ", value)
+        request.put("/v1/decks/deck", {
+          id:  Number(id),
+          introduction:value,
+        }).then((res:any) => {
+          ElMessage({
+            type: 'success',
+            message: `该牌组简介更改为:${value}`,
+          })
+          console.log(res.data)
+          getDeckAndAllDetail()
+        }).catch((res:any) => {
+          console.log(res.data)
+          ElMessage({
+            type: 'info',
+            message: 'option canceled',
+          })
+        })
+
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: 'Input canceled',
+        })
+      })
+}
+
+//  修改牌组名字对应的
+const open4 = (id: number) => {
+  ElMessageBox.prompt('输入新名字', '重命名', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    center: true,
+
+  }).then(({value}) => {
+        if (value == null ||value=="") {
+          ElMessage({
+            type: 'info',
+            message: '未检测到输入，更改未进行',
+          })
+          return
+        }
+        console.log("val: ", value)
+        request.put("/v1/decks/deck", {
+          id:  Number(id),
+          name: value,
+          introduction:null,
+          floderid:null,
+        }).then((res:any) => {
+          ElMessage({
+            type: 'success',
+            message: `该牌组新名字更改为:${value}`,
+          })
+          console.log(res.data)
+          getDeckAndAllDetail()
+        }).catch((res:any) => {
+          console.log(res.data)
+          ElMessage({
+            type: 'info',
+            message: 'option canceled',
+          })
+        })
+
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: 'Input canceled',
+        })
+      })
+}
+
+
 const getDeckAndAllDetail = () => {
   if (deckId.id == null || deckId.id == "") {
     ElMessage.error("bad request")

@@ -51,13 +51,14 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	sectionRepository := repository.NewSectionRepository(repositoryRepository)
 	sectionService := service.NewSectionService(queryQuery, serviceService, sectionRepository)
 	sectionHandler := handler.NewSectionHandler(handlerHandler, sectionService)
-	serverFont := server.NewHTTPServerFont(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler)
+	announcementsRepository := repository.NewAnnouncementsRepository(repositoryRepository)
+	announcementReadRecordRepository := repository.NewAnnouncementReadRecordRepository(repositoryRepository)
+	announcementsService := service.NewAnnouncementsService(serviceService, announcementsRepository, announcementReadRecordRepository)
+	announcementsHandler := handler.NewAnnouncementsHandler(handlerHandler, announcementsService)
+	serverFont := server.NewHTTPServerFont(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler, announcementsHandler)
 	adminRepository := repository.NewAdminRepository(repositoryRepository)
 	adminService := service.NewAdminService(serviceService, adminRepository)
 	adminHandler := handler.NewAdminHandler(handlerHandler, adminService)
-	announcementsRepository := repository.NewAnnouncementsRepository(repositoryRepository)
-	announcementsService := service.NewAnnouncementsService(serviceService, announcementsRepository)
-	announcementsHandler := handler.NewAnnouncementsHandler(handlerHandler, announcementsService)
 	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler, adminHandler, announcementsHandler)
 	job := server.NewJob(logger)
 	appApp := newApp(serverFont, serverAdmin, job)
@@ -67,7 +68,7 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository, repository.NewDeckRepository, repository.NewKnowledgeRepository, repository.NewRecordRepository, repository.NewSectionRepository, repository.NewAnnouncementsRepository, repository.NewAdminRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewFloderRepository, repository.NewDeckRepository, repository.NewKnowledgeRepository, repository.NewRecordRepository, repository.NewSectionRepository, repository.NewAnnouncementsRepository, repository.NewAnnouncementReadRecordRepository, repository.NewAdminRepository)
 
 var querySet = wire.NewSet(query.NewQuery)
 

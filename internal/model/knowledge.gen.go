@@ -21,12 +21,12 @@ type Knowledge struct {
 	Font       string         `gorm:"column:font;type:longtext" json:"font"`
 	Originfont string         `gorm:"column:originfont;type:longtext" json:"originfont"`
 	Back       string         `gorm:"column:back;type:longtext" json:"back"`
-	Onlearning int64          `gorm:"column:onlearning;type:tinyint(1);comment:是否在学习" json:"onlearning"`      // 是否在学习
-	Typeof     int64          `gorm:"column:typeof;type:bigint;comment:卡片类型" json:"typeof"`                   // 卡片类型
-	Deckid     int64          `gorm:"column:deckid;type:bigint unsigned;not null;comment:牌组id" json:"deckid"` // 牌组id
-	Skilled    float64        `gorm:"column:skilled;type:double;comment:熟练度" json:"skilled"`                  // 熟练度
-	Sectionid  int64          `gorm:"column:sectionid;type:bigint;not null;comment:章节id" json:"sectionid"`    // 章节id
-	UserID     string         `gorm:"column:user_id;type:varchar(191);not null;comment:用户id" json:"userId"`   // 用户id
+	Onlearning int64          `gorm:"column:onlearning;type:tinyint(1);comment:0:未开始复习;1:复习中;2:复习周期长，记录为复习完成，不再加入复习调度" json:"onlearning"` // 0:未开始复习;1:复习中;2:复习周期长，记录为复习完成，不再加入复习调度
+	Typeof     int64          `gorm:"column:typeof;type:bigint;comment:卡片类型" json:"typeof"`                                               // 卡片类型
+	Deckid     int64          `gorm:"column:deckid;type:bigint unsigned;not null;comment:牌组id" json:"deckid"`                             // 牌组id
+	Skilled    float64        `gorm:"column:skilled;type:double;comment:熟练度" json:"skilled"`                                              // 熟练度
+	Sectionid  int64          `gorm:"column:sectionid;type:bigint;not null;comment:章节id" json:"sectionid"`                                // 章节id
+	UserID     string         `gorm:"column:user_id;type:varchar(191);not null;comment:用户id" json:"userId"`                               // 用户id
 }
 
 // TableName Knowledge's table name

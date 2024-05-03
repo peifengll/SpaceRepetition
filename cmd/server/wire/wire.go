@@ -30,6 +30,7 @@ var repositorySet = wire.NewSet(
 	repository.NewRecordRepository,
 	repository.NewSectionRepository,
 	repository.NewAnnouncementsRepository,
+	repository.NewAnnouncementReadRecordRepository,
 	repository.NewAdminRepository,
 )
 

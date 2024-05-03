@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RobotSwitch from "@/components/tabs/RobotSwitch.vue";
-import {ref, onBeforeMount} from 'vue'
+import {ref, onBeforeMount, onMounted} from 'vue'
 import type {TabsPaneContext} from 'element-plus'
 import request from "../utils/request.ts";
 import {ElMessage, ElMessageBox} from 'element-plus'
@@ -9,6 +9,7 @@ import {Select} from '@element-plus/icons-vue'
 import {Search} from '@element-plus/icons-vue'
 import {bind} from "lodash-es";
 import router from "@/router";
+import { time } from "console";
 
 const Decks = ref([])
 const activeName = ref('')
@@ -25,9 +26,40 @@ const getLoginData = () => {
 
 }
 
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // 月份从0开始计数，所以加1
+  const day = date.getDate();
+  return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+}
+
+const annElessage=(index:number,maxl:number,data:any)=>{
+  setTimeout(function () {
+          ElNotification({
+            title: data[index].title,
+            dangerouslyUseHTMLString: true,
+            message: '<strong>' + data[index].content+ '</strong> <br> <i>'+ formatDate(data[index].publishTime)+'</i>',
+            offset: 100,
+          })
+          if (index<maxl-1){
+            annElessage(index+1,maxl,data)
+          }
+        }, 4000);
+}
+const getAnns = () => {
+  request.get("v1/pushanns", {}).then((res) => {
+    let data = res.data.data
+    annElessage(0,data.length,data)
+  })
+}
 // 在页面加载时调用 API 获取数据
 onBeforeMount(() => {
   getLoginData()
+  
+})
+onMounted(()=>{
+  getAnns()
 })
 
 const addFloder = (flodername: string) => {
@@ -217,12 +249,11 @@ const toEditor=(row:any)=>{
 
   router.push({ name: 'editor', query: { id: row.id } });
 }
-
 </script>
 
 <template>
   <div class="common-layout" >
-
+   
 <!--    <el-divider/>-->
     <el-container style="height: 50px">
       <el-container>

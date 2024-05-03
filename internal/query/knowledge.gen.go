@@ -57,7 +57,7 @@ type knowledge struct {
 	Font       field.String
 	Originfont field.String
 	Back       field.String
-	Onlearning field.Int64   // 是否在学习
+	Onlearning field.Int64   // 0:未开始复习;1:复习中;2:复习周期长，记录为复习完成，不再加入复习调度
 	Typeof     field.Int64   // 卡片类型
 	Deckid     field.Int64   // 牌组id
 	Skilled    field.Float64 // 熟练度

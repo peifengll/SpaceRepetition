@@ -5,6 +5,7 @@ import (
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"github.com/peifengll/SpaceRepetition/internal/service"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -105,6 +106,7 @@ func (h *DeckHandler) UpdateDeck(ctx *gin.Context) {
 	var d v1.DeckRequest
 	err = ctx.ShouldBindJSON(&d)
 	if err != nil {
+		log.Println(err.Error())
 		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, err)
 		return
 	}

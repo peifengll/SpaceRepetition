@@ -96,3 +96,40 @@ func (h *AnnouncementsHandler) UpdateAnnouncement(ctx *gin.Context) {
 	}
 	v1.HandleSuccess(ctx, nil)
 }
+
+// 设置该公告为已读，不再推送
+func (h *AnnouncementsHandler) SetAnnouncementHaveRead(ctx *gin.Context) {
+	var req v1.AnnouncementReadReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+	userId := GetUserIdFromCtx(ctx)
+	if userId == "" {
+		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		return
+	}
+
+	err := h.announcementsService.SetAnnouncementHaveRead(ctx, req.ID, userId)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, nil)
+}
+
+// 该用户还没查看的公告
+func (h *AnnouncementsHandler) GetAnnouncementNoRead(ctx *gin.Context) {
+	userId := GetUserIdFromCtx(ctx)
+	if userId == "" {
+		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		return
+	}
+
+	anns, err := h.announcementsService.GetAnnouncementNoRead(ctx, userId)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, anns)
+}

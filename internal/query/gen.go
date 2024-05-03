@@ -16,21 +16,25 @@ import (
 )
 
 var (
-	Q            = new(Query)
-	Admin        *admin
-	Announcement *announcement
-	Deck         *deck
-	Floder       *floder
-	Knowledge    *knowledge
-	Record       *record
-	Section      *section
-	User         *user
+	Q                      = new(Query)
+	Admin                  *admin
+	Announcement           *announcement
+	AnnouncementReadRecord *announcementReadRecord
+	DayReviewStatistic     *dayReviewStatistic
+	Deck                   *deck
+	Floder                 *floder
+	Knowledge              *knowledge
+	Record                 *record
+	Section                *section
+	User                   *user
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	Admin = &Q.Admin
 	Announcement = &Q.Announcement
+	AnnouncementReadRecord = &Q.AnnouncementReadRecord
+	DayReviewStatistic = &Q.DayReviewStatistic
 	Deck = &Q.Deck
 	Floder = &Q.Floder
 	Knowledge = &Q.Knowledge
@@ -41,44 +45,50 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:           db,
-		Admin:        newAdmin(db, opts...),
-		Announcement: newAnnouncement(db, opts...),
-		Deck:         newDeck(db, opts...),
-		Floder:       newFloder(db, opts...),
-		Knowledge:    newKnowledge(db, opts...),
-		Record:       newRecord(db, opts...),
-		Section:      newSection(db, opts...),
-		User:         newUser(db, opts...),
+		db:                     db,
+		Admin:                  newAdmin(db, opts...),
+		Announcement:           newAnnouncement(db, opts...),
+		AnnouncementReadRecord: newAnnouncementReadRecord(db, opts...),
+		DayReviewStatistic:     newDayReviewStatistic(db, opts...),
+		Deck:                   newDeck(db, opts...),
+		Floder:                 newFloder(db, opts...),
+		Knowledge:              newKnowledge(db, opts...),
+		Record:                 newRecord(db, opts...),
+		Section:                newSection(db, opts...),
+		User:                   newUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Admin        admin
-	Announcement announcement
-	Deck         deck
-	Floder       floder
-	Knowledge    knowledge
-	Record       record
-	Section      section
-	User         user
+	Admin                  admin
+	Announcement           announcement
+	AnnouncementReadRecord announcementReadRecord
+	DayReviewStatistic     dayReviewStatistic
+	Deck                   deck
+	Floder                 floder
+	Knowledge              knowledge
+	Record                 record
+	Section                section
+	User                   user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:           db,
-		Admin:        q.Admin.clone(db),
-		Announcement: q.Announcement.clone(db),
-		Deck:         q.Deck.clone(db),
-		Floder:       q.Floder.clone(db),
-		Knowledge:    q.Knowledge.clone(db),
-		Record:       q.Record.clone(db),
-		Section:      q.Section.clone(db),
-		User:         q.User.clone(db),
+		db:                     db,
+		Admin:                  q.Admin.clone(db),
+		Announcement:           q.Announcement.clone(db),
+		AnnouncementReadRecord: q.AnnouncementReadRecord.clone(db),
+		DayReviewStatistic:     q.DayReviewStatistic.clone(db),
+		Deck:                   q.Deck.clone(db),
+		Floder:                 q.Floder.clone(db),
+		Knowledge:              q.Knowledge.clone(db),
+		Record:                 q.Record.clone(db),
+		Section:                q.Section.clone(db),
+		User:                   q.User.clone(db),
 	}
 }
 
@@ -92,39 +102,45 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:           db,
-		Admin:        q.Admin.replaceDB(db),
-		Announcement: q.Announcement.replaceDB(db),
-		Deck:         q.Deck.replaceDB(db),
-		Floder:       q.Floder.replaceDB(db),
-		Knowledge:    q.Knowledge.replaceDB(db),
-		Record:       q.Record.replaceDB(db),
-		Section:      q.Section.replaceDB(db),
-		User:         q.User.replaceDB(db),
+		db:                     db,
+		Admin:                  q.Admin.replaceDB(db),
+		Announcement:           q.Announcement.replaceDB(db),
+		AnnouncementReadRecord: q.AnnouncementReadRecord.replaceDB(db),
+		DayReviewStatistic:     q.DayReviewStatistic.replaceDB(db),
+		Deck:                   q.Deck.replaceDB(db),
+		Floder:                 q.Floder.replaceDB(db),
+		Knowledge:              q.Knowledge.replaceDB(db),
+		Record:                 q.Record.replaceDB(db),
+		Section:                q.Section.replaceDB(db),
+		User:                   q.User.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Admin        IAdminDo
-	Announcement IAnnouncementDo
-	Deck         IDeckDo
-	Floder       IFloderDo
-	Knowledge    IKnowledgeDo
-	Record       IRecordDo
-	Section      ISectionDo
-	User         IUserDo
+	Admin                  IAdminDo
+	Announcement           IAnnouncementDo
+	AnnouncementReadRecord IAnnouncementReadRecordDo
+	DayReviewStatistic     IDayReviewStatisticDo
+	Deck                   IDeckDo
+	Floder                 IFloderDo
+	Knowledge              IKnowledgeDo
+	Record                 IRecordDo
+	Section                ISectionDo
+	User                   IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Admin:        q.Admin.WithContext(ctx),
-		Announcement: q.Announcement.WithContext(ctx),
-		Deck:         q.Deck.WithContext(ctx),
-		Floder:       q.Floder.WithContext(ctx),
-		Knowledge:    q.Knowledge.WithContext(ctx),
-		Record:       q.Record.WithContext(ctx),
-		Section:      q.Section.WithContext(ctx),
-		User:         q.User.WithContext(ctx),
+		Admin:                  q.Admin.WithContext(ctx),
+		Announcement:           q.Announcement.WithContext(ctx),
+		AnnouncementReadRecord: q.AnnouncementReadRecord.WithContext(ctx),
+		DayReviewStatistic:     q.DayReviewStatistic.WithContext(ctx),
+		Deck:                   q.Deck.WithContext(ctx),
+		Floder:                 q.Floder.WithContext(ctx),
+		Knowledge:              q.Knowledge.WithContext(ctx),
+		Record:                 q.Record.WithContext(ctx),
+		Section:                q.Section.WithContext(ctx),
+		User:                   q.User.WithContext(ctx),
 	}
 }
 

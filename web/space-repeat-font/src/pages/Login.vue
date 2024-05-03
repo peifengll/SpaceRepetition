@@ -33,8 +33,8 @@ const password = ref('');
 const store = useStore();
 
 const getLoginData = () => {
-  store.increment()
-  console.log(store.count)
+  // store.increment()
+  // console.log(store.count)
   // return
   request.post("/v1/login", {
     email: email.value,

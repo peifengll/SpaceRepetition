@@ -24,6 +24,7 @@ func NewHTTPServerFont(
 	knowledgeHandler *handler.KnowledgeHandler,
 	recordHandler *handler.RecordHandler,
 	sectionHandler *handler.SectionHandler,
+	announcementsHandler *handler.AnnouncementsHandler,
 ) *http.ServerFont {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServerFont(
@@ -72,6 +73,8 @@ func NewHTTPServerFont(
 		strictAuthRouter := v1.Group("/").Use(middleware.StrictAuth(jwt, logger))
 		{
 			strictAuthRouter.PUT("/user", userHandler.UpdateProfile)
+			strictAuthRouter.POST("/readann", announcementsHandler.SetAnnouncementHaveRead)
+			strictAuthRouter.GET("/pushanns", announcementsHandler.GetAnnouncementNoRead)
 		}
 
 		decks := v1.Group("/decks").Use(middleware.StrictAuth(jwt, logger))
