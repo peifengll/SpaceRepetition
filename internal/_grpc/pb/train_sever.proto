@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+//生成go代码相关的option，此option是必要的，不然编译会出错
+option go_package = "/;train";
+
+message TrainRequest {
+    string revlog_path = 1;
+}
+message TrainReply {
+    bool revlog_path = 1;
+}
+
+
+service Trainer {
+    rpc TrainWeights (TrainRequest) returns (TrainReply);
+}
+
+
