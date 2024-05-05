@@ -59,7 +59,6 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest) err
 		if err = s.userRepo.Create(ctx, user); err != nil {
 			return err
 		}
-		// TODO: other repo
 		return nil
 	})
 	return err
@@ -70,7 +69,6 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (string, 
 	if err != nil || user == nil {
 		return "", v1.ErrUnauthorized
 	}
-
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
 		return "", err
@@ -79,7 +77,6 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (string, 
 	if err != nil {
 		return "", err
 	}
-
 	return token, nil
 }
 

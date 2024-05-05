@@ -66,6 +66,14 @@ func (s *deckService) GetDeckAll(id int64) (*v1.DeckCardResp, error) {
 				Skilled:    cardmodels[i].Skilled,
 				Sectionid:  cardmodels[i].Sectionid,
 			}
+			if cards[i].Onlearning == 1 {
+				record, err := s.query.Record.Where(s.query.Record.KnowledgeID.Eq(cards[i].ID), s.query.Record.On.Eq(1)).First()
+				if err != nil {
+					return nil, err
+				}
+				cards[i].Due = record.Due
+			}
+
 		}
 		res.Sections = append(res.Sections, &v1.SectionCardResp{
 			ID:     secs[i].ID,

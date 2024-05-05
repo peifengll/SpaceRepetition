@@ -8,6 +8,7 @@ package wire
 
 import (
 	"github.com/google/wire"
+	"github.com/peifengll/SpaceRepetition/internal/export_task"
 	"github.com/peifengll/SpaceRepetition/internal/handler"
 	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
@@ -59,9 +60,10 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	adminRepository := repository.NewAdminRepository(repositoryRepository)
 	adminService := service.NewAdminService(serviceService, adminRepository)
 	adminHandler := handler.NewAdminHandler(handlerHandler, adminService)
-	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, userHandler, floderHandler, deckHandler, knowledgeHandler, recordHandler, sectionHandler, adminHandler, announcementsHandler)
+	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, adminHandler, announcementsHandler)
 	job := server.NewJob(logger)
-	appApp := newApp(serverFont, serverAdmin, job)
+	taskManager := etask.NewTaskManager(client, recordService)
+	appApp := newApp(serverFont, serverAdmin, job, taskManager)
 	return appApp, func() {
 	}, nil
 }
@@ -76,9 +78,9 @@ var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service
 
 var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler, handler.NewDeckHandler, handler.NewKnowledgeHandler, handler.NewRecordHandler, handler.NewSectionHandler, handler.NewAdminHandler, handler.NewAnnouncementsHandler)
 
-var serverSet = wire.NewSet(server.NewHTTPServerFont, server.NewHTTPServerAdmin, server.NewJob, server.NewTask)
+var serverSet = wire.NewSet(server.NewHTTPServerFont, server.NewHTTPServerAdmin, server.NewJob, server.NewTask, etask.NewTaskManager)
 
 // build App
-func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job) *app.App {
-	return app.NewApp(app.WithServer(httpServer, httpServer2, job), app.WithName("demo-server"))
+func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job, tm *etask.TaskManager) *app.App {
+	return app.NewApp(app.WithServer(httpServer, httpServer2, job, tm), app.WithName("demo-server"))
 }

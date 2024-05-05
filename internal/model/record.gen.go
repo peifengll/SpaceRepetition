@@ -31,6 +31,7 @@ type Record struct {
 	Lastop        int64          `gorm:"column:lastop;type:bigint;comment:上一次的选择" json:"lastop"`                       // 上一次的选择
 	LastReview    time.Time      `gorm:"column:LastReview;type:datetime(3);not null;comment:最后复习时间" json:"lastReview"` // 最后复习时间
 	UserID        string         `gorm:"column:user_id;type:varchar(191);not null;comment:属于哪一个用户" json:"userId"`      // 属于哪一个用户
+	Rate          int64          `gorm:"column:rate;type:int;comment:复习的时候进行的评分" json:"rate"`                          // 复习的时候进行的评分
 }
 
 // TableName Record's table name

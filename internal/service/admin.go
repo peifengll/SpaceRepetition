@@ -84,7 +84,6 @@ func (s *adminService) Login(ctx context.Context, req *v1.LoginAdminReq) (string
 	if err != nil || user == nil {
 		return "", v1.ErrUnauthorized
 	}
-
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
 		return "", err
@@ -93,7 +92,6 @@ func (s *adminService) Login(ctx context.Context, req *v1.LoginAdminReq) (string
 	if err != nil {
 		return "", err
 	}
-
 	return token, nil
 }
 

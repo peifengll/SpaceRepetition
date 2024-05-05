@@ -19,6 +19,7 @@ type DayReviewStatistic struct {
 	AgainNum   int64     `gorm:"column:again_num;type:int;not null;comment:复习时选择again的次数" json:"againNum"` // 复习时选择again的次数
 	HardNum    int64     `gorm:"column:hard_num;type:int;not null;comment:复习时选择hard的次数" json:"hardNum"`    // 复习时选择hard的次数
 	RecordDate time.Time `gorm:"column:record_date;type:date;not null;comment:是哪一天" json:"recordDate"`     // 是哪一天
+	UserID     string    `gorm:"column:user_id;type:varchar(50);not null;comment:用户的id" json:"userId"`     // 用户的id
 }
 
 // TableName DayReviewStatistic's table name

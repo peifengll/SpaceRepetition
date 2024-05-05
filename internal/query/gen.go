@@ -22,6 +22,7 @@ var (
 	AnnouncementReadRecord *announcementReadRecord
 	DayReviewStatistic     *dayReviewStatistic
 	Deck                   *deck
+	ExportInfo             *exportInfo
 	Floder                 *floder
 	Knowledge              *knowledge
 	Record                 *record
@@ -36,6 +37,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	AnnouncementReadRecord = &Q.AnnouncementReadRecord
 	DayReviewStatistic = &Q.DayReviewStatistic
 	Deck = &Q.Deck
+	ExportInfo = &Q.ExportInfo
 	Floder = &Q.Floder
 	Knowledge = &Q.Knowledge
 	Record = &Q.Record
@@ -51,6 +53,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		AnnouncementReadRecord: newAnnouncementReadRecord(db, opts...),
 		DayReviewStatistic:     newDayReviewStatistic(db, opts...),
 		Deck:                   newDeck(db, opts...),
+		ExportInfo:             newExportInfo(db, opts...),
 		Floder:                 newFloder(db, opts...),
 		Knowledge:              newKnowledge(db, opts...),
 		Record:                 newRecord(db, opts...),
@@ -67,6 +70,7 @@ type Query struct {
 	AnnouncementReadRecord announcementReadRecord
 	DayReviewStatistic     dayReviewStatistic
 	Deck                   deck
+	ExportInfo             exportInfo
 	Floder                 floder
 	Knowledge              knowledge
 	Record                 record
@@ -84,6 +88,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		AnnouncementReadRecord: q.AnnouncementReadRecord.clone(db),
 		DayReviewStatistic:     q.DayReviewStatistic.clone(db),
 		Deck:                   q.Deck.clone(db),
+		ExportInfo:             q.ExportInfo.clone(db),
 		Floder:                 q.Floder.clone(db),
 		Knowledge:              q.Knowledge.clone(db),
 		Record:                 q.Record.clone(db),
@@ -108,6 +113,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		AnnouncementReadRecord: q.AnnouncementReadRecord.replaceDB(db),
 		DayReviewStatistic:     q.DayReviewStatistic.replaceDB(db),
 		Deck:                   q.Deck.replaceDB(db),
+		ExportInfo:             q.ExportInfo.replaceDB(db),
 		Floder:                 q.Floder.replaceDB(db),
 		Knowledge:              q.Knowledge.replaceDB(db),
 		Record:                 q.Record.replaceDB(db),
@@ -122,6 +128,7 @@ type queryCtx struct {
 	AnnouncementReadRecord IAnnouncementReadRecordDo
 	DayReviewStatistic     IDayReviewStatisticDo
 	Deck                   IDeckDo
+	ExportInfo             IExportInfoDo
 	Floder                 IFloderDo
 	Knowledge              IKnowledgeDo
 	Record                 IRecordDo
@@ -136,6 +143,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		AnnouncementReadRecord: q.AnnouncementReadRecord.WithContext(ctx),
 		DayReviewStatistic:     q.DayReviewStatistic.WithContext(ctx),
 		Deck:                   q.Deck.WithContext(ctx),
+		ExportInfo:             q.ExportInfo.WithContext(ctx),
 		Floder:                 q.Floder.WithContext(ctx),
 		Knowledge:              q.Knowledge.WithContext(ctx),
 		Record:                 q.Record.WithContext(ctx),

@@ -19,21 +19,54 @@
     <el-menu-item index="3"  @click="toReviewPage" >开始学习</el-menu-item>
     <el-menu-item index="3"  @click="openConfirmLoginOut" >登出</el-menu-item>
     <el-sub-menu index="2">
-      <template #title>Workspace</template>
-      <el-menu-item index="2-1">item one</el-menu-item>
-      <el-menu-item index="2-2">item two</el-menu-item>
-      <el-menu-item index="2-3">item three</el-menu-item>
-      <el-sub-menu index="2-4">
+      <template #title>功能</template>
+      <el-menu-item index="2-1" @click="toExportInfo">查看复习数据</el-menu-item>
+      <el-menu-item index="2-2"  @click="dialogFormVisibleExport = true" >复习数据导出</el-menu-item>
+      <el-menu-item index="2-3" @click="drawer = true">个人信息修改</el-menu-item>
+      <!-- <el-sub-menu index="2-4">
         <template #title>item four</template>
         <el-menu-item index="2-4-1">item one</el-menu-item>
         <el-menu-item index="2-4-2">item two</el-menu-item>
         <el-menu-item index="2-4-3">item three</el-menu-item>
-      </el-sub-menu>
+      </el-sub-menu> -->
+      <el-menu-item index="2-5" @click="toReviewStatistics">复习情况展示</el-menu-item>
     </el-sub-menu>
   </el-menu>
-  <el-button type="primary" style="margin-left: 16px" @click="drawer = true">
-    open
-  </el-button>
+
+  <el-dialog v-model="dialogFormVisibleExport" title="选择导出记录的时间范围" width="500">
+    <el-form :model="form" label-width="auto" style="max-width: 600px">
+    <el-form-item label="选择时间">
+      <el-col :span="11">
+        <el-date-picker
+          v-model="exporttrq.date1"
+          type="date"
+          placeholder="Pick a date"
+          style="width: 100%"
+        />
+      </el-col>
+      <el-col :span="2" class="text-center">
+        <span class="text-gray-500"> ---</span>
+      </el-col>
+      <el-col :span="11">
+        <el-date-picker
+          v-model="exporttrq.date2"
+          placeholder="Pick a time"
+          style="width: 100%"
+        />
+      </el-col>
+    </el-form-item>
+    
+    
+    <el-form-item >
+      <div>
+      <el-button type="primary" @click="toExportInfoReq">确定</el-button>
+      <el-button>取消</el-button>  
+      </div>
+    </el-form-item>
+  </el-form>
+   
+    
+  </el-dialog>
 
   <el-drawer v-model="drawer" title="I am the title" :with-header="false">
     <el-form :model="form" label-width="auto" style="max-width: 600px" label-position="left">
@@ -75,7 +108,7 @@
 import {ref} from 'vue'
 import { onBeforeMount} from "vue";
 const drawer = ref(false)
-
+const dialogFormVisibleExport = ref(false)
 const activeIndex = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
@@ -105,6 +138,38 @@ const form = reactive({
   request_retention:'',
 })
 
+const exporttrq = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+})
+
+const toExportInfo=()=>{
+  window.location.href=SelfUrl+'exportinfos'
+}
+
+const toReviewStatistics=()=>{
+  window.location.href=SelfUrl+'reviewtatistics'
+}
+
+
+const toExportInfoReq=()=>{
+  console.log("导出成功了，请去查看界面下载！")
+  console.log(exporttrq.date1)
+  console.log(exporttrq.date2)
+  var date1 = new Date(exporttrq.date1);
+  var date2 = new Date(exporttrq.date2);
+  var timestamp1 = date1.getTime();
+  var timestamp2 = date2.getTime();
+  console.log("转化后",timestamp1,timestamp2)
+  dialogFormVisibleExport.value=false;
+}
+
 const onSubmit = () => {
   console.log("form.name",form.name)
   console.log("form.gender",form.gender)
@@ -121,7 +186,8 @@ const onSubmit = () => {
     introduction:form.introduction,
     maxInterval:Number(form.interval)  ,
     weights:form.reviewparms,
-    requestRetention:  parseFloat(form.request_retention),
+    requestRetention:  parseFloat(form.request_retention)
+    ,
   }).then(res => {
     console.log(res)
     if (res.status == 200) {
@@ -147,12 +213,7 @@ const loginOut = () => {
   // location.reload()
   window.location.href=SelfUrl
 }
-const open1 = () => {
-  ElNotification({
-    title: 'Title',
-    message: h('i', { style: 'color: teal' }, 'This is a reminder'),
-  })
-}
+
 
 const openConfirmLoginOut = () => {
   ElMessageBox.confirm(

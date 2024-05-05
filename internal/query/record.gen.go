@@ -44,6 +44,7 @@ func newRecord(db *gorm.DB, opts ...gen.DOOption) record {
 	_record.Lastop = field.NewInt64(tableName, "lastop")
 	_record.LastReview = field.NewTime(tableName, "LastReview")
 	_record.UserID = field.NewString(tableName, "user_id")
+	_record.Rate = field.NewInt64(tableName, "rate")
 
 	_record.fillFieldMap()
 
@@ -71,6 +72,7 @@ type record struct {
 	Lastop        field.Int64  // 上一次的选择
 	LastReview    field.Time   // 最后复习时间
 	UserID        field.String // 属于哪一个用户
+	Rate          field.Int64  // 复习的时候进行的评分
 
 	fieldMap map[string]field.Expr
 }
@@ -104,6 +106,7 @@ func (r *record) updateTableName(table string) *record {
 	r.Lastop = field.NewInt64(table, "lastop")
 	r.LastReview = field.NewTime(table, "LastReview")
 	r.UserID = field.NewString(table, "user_id")
+	r.Rate = field.NewInt64(table, "rate")
 
 	r.fillFieldMap()
 
@@ -120,7 +123,7 @@ func (r *record) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (r *record) fillFieldMap() {
-	r.fieldMap = make(map[string]field.Expr, 17)
+	r.fieldMap = make(map[string]field.Expr, 18)
 	r.fieldMap["id"] = r.ID
 	r.fieldMap["created_at"] = r.CreatedAt
 	r.fieldMap["updated_at"] = r.UpdatedAt
@@ -138,6 +141,7 @@ func (r *record) fillFieldMap() {
 	r.fieldMap["lastop"] = r.Lastop
 	r.fieldMap["LastReview"] = r.LastReview
 	r.fieldMap["user_id"] = r.UserID
+	r.fieldMap["rate"] = r.Rate
 }
 
 func (r record) clone(db *gorm.DB) record {

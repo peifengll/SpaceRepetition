@@ -34,6 +34,7 @@ func newDayReviewStatistic(db *gorm.DB, opts ...gen.DOOption) dayReviewStatistic
 	_dayReviewStatistic.AgainNum = field.NewInt64(tableName, "again_num")
 	_dayReviewStatistic.HardNum = field.NewInt64(tableName, "hard_num")
 	_dayReviewStatistic.RecordDate = field.NewTime(tableName, "record_date")
+	_dayReviewStatistic.UserID = field.NewString(tableName, "user_id")
 
 	_dayReviewStatistic.fillFieldMap()
 
@@ -46,12 +47,13 @@ type dayReviewStatistic struct {
 
 	ALL        field.Asterisk
 	ID         field.Int64
-	CardNum    field.Int64 // 当天复习了多少张卡片
-	EasyNum    field.Int64 // 复习时选择easy的次数
-	GoodNum    field.Int64 // 复习时选择good的次数
-	AgainNum   field.Int64 // 复习时选择again的次数
-	HardNum    field.Int64 // 复习时选择hard的次数
-	RecordDate field.Time  // 是哪一天
+	CardNum    field.Int64  // 当天复习了多少张卡片
+	EasyNum    field.Int64  // 复习时选择easy的次数
+	GoodNum    field.Int64  // 复习时选择good的次数
+	AgainNum   field.Int64  // 复习时选择again的次数
+	HardNum    field.Int64  // 复习时选择hard的次数
+	RecordDate field.Time   // 是哪一天
+	UserID     field.String // 用户的id
 
 	fieldMap map[string]field.Expr
 }
@@ -75,6 +77,7 @@ func (d *dayReviewStatistic) updateTableName(table string) *dayReviewStatistic {
 	d.AgainNum = field.NewInt64(table, "again_num")
 	d.HardNum = field.NewInt64(table, "hard_num")
 	d.RecordDate = field.NewTime(table, "record_date")
+	d.UserID = field.NewString(table, "user_id")
 
 	d.fillFieldMap()
 
@@ -91,7 +94,7 @@ func (d *dayReviewStatistic) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (d *dayReviewStatistic) fillFieldMap() {
-	d.fieldMap = make(map[string]field.Expr, 7)
+	d.fieldMap = make(map[string]field.Expr, 8)
 	d.fieldMap["id"] = d.ID
 	d.fieldMap["card_num"] = d.CardNum
 	d.fieldMap["easy_num"] = d.EasyNum
@@ -99,6 +102,7 @@ func (d *dayReviewStatistic) fillFieldMap() {
 	d.fieldMap["again_num"] = d.AgainNum
 	d.fieldMap["hard_num"] = d.HardNum
 	d.fieldMap["record_date"] = d.RecordDate
+	d.fieldMap["user_id"] = d.UserID
 }
 
 func (d dayReviewStatistic) clone(db *gorm.DB) dayReviewStatistic {

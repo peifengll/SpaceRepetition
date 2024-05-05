@@ -129,14 +129,12 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
 		return
 	}
-
 	var id v1.CardIdReq
 	err = ctx.BindJSON(&id)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
-	// 如果已经复习了，复习个蛋
 	review, err := h.knowledgeService.CheckReview(id.Id)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
@@ -151,7 +149,6 @@ func (h *KnowledgeHandler) ChooseToReview(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
-
 	v1.HandleSuccess(ctx, nil)
 }
 

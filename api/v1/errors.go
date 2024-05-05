@@ -18,5 +18,7 @@ var (
 	ErrUsernameAlreadyUse   = newError(1007, "The username is already in use.")
 	ErrPrivileges           = newError(1008, "your Privileges is not enough ,can't  finish op")
 
-	WeightsNotStand = newError(1009, "your weight is bad")
+	WeightsNotStand        = newError(1009, "your weight is bad")
+	ExportReviewInfoErr    = newError(1010, "export err")
+	ExportReviewAddTaskErr = newError(1011, "export add to task  err")
 )

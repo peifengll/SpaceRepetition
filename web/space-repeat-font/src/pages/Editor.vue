@@ -154,8 +154,10 @@
               </el-icon>
               {{ section.name }}
             </el-text>
-            <el-card class="box-card" style="margin: 20px" :id="'card_'+section.id+'_'+card.id"
-                     v-for="card in section.cards" contenteditable="true">
+            <div  v-for="card in section.cards">
+
+              <el-card class="box-card" style="margin: 20px" :id="'card_'+section.id+'_'+card.id"
+                     contenteditable="true">
               <!--            <template #header>-->
               <!--              <div class="card-header">-->
               <!--                <span>Card name</span>-->
@@ -167,8 +169,17 @@
                 <el-divider/>
                 {{ card.back }}
               </div>
+
+              
+              <!-- todo 在这里 输出一下相关信息 -->
               <!--            <template #footer>Footer content</template>-->
+             
             </el-card>
+            <el-tag v-if="card.onlearning==0"  effect="light" type="success" style="margin-left: 70%;">还没加入复习噢</el-tag>
+            <el-tag    v-if="card.onlearning==1" effect="light"  style="margin-left: 70%;">下次复习时间在{{ daysUntilGivenDate(card.due)  }}天后</el-tag>
+            </div>
+           
+            
           </div>
 
         </el-scrollbar>
@@ -195,6 +206,23 @@ import {defineProps} from 'vue';
 import {Console} from "inspector";
 import {ElMessage, ElMessageBox} from "element-plus";
 import { SelfUrl } from '../utils/request';
+
+
+function daysUntilGivenDate(givenDate: string): number {
+    const givenDateTime = new Date(givenDate);
+    const today = new Date();
+
+    // 计算两个日期之间的毫秒差异
+    const timeDifference = givenDateTime.getTime() - today.getTime();
+
+    // 将毫秒转换为天数
+    const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    return daysDifference;
+}
+
+
+
 
 
 const deckId = defineProps(['id']);
@@ -357,6 +385,7 @@ const getDeckAndAllDetail = () => {
   request.get("/v1/decks/deck/" + deckId.id).then((res) => {
     // console.log(res.data.data.sections)
     sections.value = res.data.data.sections
+    console.log("本牌组情况： ",sections.value)
     // console.log("aaa", sections.value)
   }).catch((res) => {
     console.log(res)

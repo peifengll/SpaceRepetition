@@ -104,6 +104,9 @@ func NewHTTPServerFont(
 			decks.DELETE("/card/:id", knowledgeHandler.DeleteCard)
 			decks.GET("/card/search/:content", knowledgeHandler.SearchCards)
 			decks.PUT("/card/toreview", knowledgeHandler.ChooseToReview)
+
+			// 复习数据导出功能
+			decks.GET("/reviewinfo/export", recordHandler.ExportReviewInfo)
 		}
 
 		review := v1.Group("/review").Use(middleware.StrictAuth(jwt, logger))
@@ -126,12 +129,6 @@ func NewHTTPServerAdmin(
 	logger *log.Logger,
 	conf *viper.Viper,
 	jwt *jwt.JWT,
-	userHandler *handler.UserHandler,
-	floderHandler *handler.FloderHandler,
-	deckHandler *handler.DeckHandler,
-	knowledgeHandler *handler.KnowledgeHandler,
-	recordHandler *handler.RecordHandler,
-	sectionHandler *handler.SectionHandler,
 	adminHandler *handler.AdminHandler,
 	announcementsHandler *handler.AnnouncementsHandler,
 ) *http.ServerAdmin {

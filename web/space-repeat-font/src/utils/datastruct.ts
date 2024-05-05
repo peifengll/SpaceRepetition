@@ -52,7 +52,7 @@ export function shouldReview(card: Card): boolean {
 }
 
 export function insertCard(deck: Deck, card: Card): void {
-    const randomIndex = Math.floor(Math.random() * 5) + 1;
+    const randomIndex = Math.floor(Math.random() * 4) + 2;
     deck.cards.splice(randomIndex, 0, card);
 }
 

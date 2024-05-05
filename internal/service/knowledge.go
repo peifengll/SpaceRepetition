@@ -283,8 +283,13 @@ func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (int6
 		UserID:        userid,
 	}
 	err = q.Transaction(func(tx *query.Query) error {
+		// 将到期的这条数据的评分给他
+		_, err = tx.Record.Where(q.Record.ID.Eq(t.RecordID)).Update(q.Record.Rate, t.Opt)
+		if err != nil {
+			return err
+		}
 		// 新的record插入进去，旧的record进行抛掉
-		_, err := tx.Record.Where(q.Record.ID.Eq(record.ID)).Update(q.Record.On, 0)
+		_, err = tx.Record.Where(q.Record.ID.Eq(record.ID)).Update(q.Record.On, 0)
 		if err != nil {
 			return err
 		}

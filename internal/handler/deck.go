@@ -38,7 +38,6 @@ func (h *DeckHandler) AddDeck(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
-
 	isAccess, err := h.deckService.CheckAddDeckAccess(d.Floderid, userId)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)

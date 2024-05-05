@@ -5,6 +5,7 @@ package wire
 
 import (
 	"github.com/google/wire"
+	"github.com/peifengll/SpaceRepetition/internal/export_task"
 	"github.com/peifengll/SpaceRepetition/internal/handler"
 	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
@@ -67,12 +68,13 @@ var serverSet = wire.NewSet(
 	server.NewHTTPServerAdmin,
 	server.NewJob,
 	server.NewTask,
+	etask.NewTaskManager,
 )
 
 // build App
-func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job) *app.App {
+func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job, tm *etask.TaskManager) *app.App {
 	return app.NewApp(
-		app.WithServer(httpServer, httpServer2, job),
+		app.WithServer(httpServer, httpServer2, job, tm),
 		app.WithName("demo-server"),
 	)
 }
