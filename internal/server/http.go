@@ -142,6 +142,7 @@ func NewHTTPServerAdmin(
 	jwt *jwt.JWT,
 	adminHandler *handler.AdminHandler,
 	announcementsHandler *handler.AnnouncementsHandler,
+	userHandler *handler.UserHandler,
 ) *http.ServerAdmin {
 	gin.SetMode(gin.ReleaseMode)
 	s := http.NewServerAdmin(
@@ -167,7 +168,8 @@ func NewHTTPServerAdmin(
 	{
 		noAuthRouter.POST("/login", adminHandler.Login)
 		noAuthRouter.GET("/announcement", announcementsHandler.ShowAnnouncement)
-		AuthRouter := noAuthRouter.Group("").Use(middleware.StrictAuth(jwt, logger))
+		AuthRouter := noAuthRouter.Group("")
+		//.Use(middleware.StrictAuth(jwt, logger))
 		{
 			AuthRouter.POST("/register", adminHandler.Register)
 			AuthRouter.PUT("/privileges", adminHandler.UpdatePrivileges)
@@ -175,9 +177,11 @@ func NewHTTPServerAdmin(
 			AuthRouter.GET("/accounts", adminHandler.ShowAdminAccounts)
 
 			AuthRouter.POST("/announcement", announcementsHandler.AddAnnouncement)
-			AuthRouter.DELETE("/announcement", announcementsHandler.DelAnnouncement)
+			AuthRouter.POST("/announcementdel", announcementsHandler.DelAnnouncement)
 			AuthRouter.PUT("/announcement", announcementsHandler.UpdateAnnouncement)
 
+			// 获取今日使用系统的人数
+			AuthRouter.GET("/statics", userHandler.Statics)
 		}
 	}
 

@@ -17,6 +17,8 @@ type UserService interface {
 	GetProfile(ctx context.Context, userId string) (*v1.GetProfileResponseData, error)
 	UpdateProfile(ctx context.Context, userId string, req *v1.UpdateProfileRequest) error
 	UpdateUserInfos(ctx context.Context, userId string, req *v1.UserUpdateReq) error
+	GetTenUserInfos() ([]v1.UserWithNum, error)
+	OnLearningErNum() (int64, error)
 }
 
 func NewUserService(que *query.Query, service *Service, userRepo repository.UserRepository) UserService {
@@ -147,4 +149,28 @@ func (s *userService) UpdateUserInfos(ctx context.Context, userId string, req *v
 	}
 
 	return nil
+}
+
+func (s *userService) GetTenUserInfos() ([]v1.UserWithNum, error) {
+	numids, err := s.userRepo.Limit10UserIds()
+	if err != nil {
+		return nil, err
+	}
+	dc := make([]v1.UserWithNum, 0)
+	u := s.query.User
+	for _, item := range numids {
+		first, err := u.Where(u.UserID.Eq(item.UserId)).First()
+		if err != nil {
+			return nil, err
+		}
+		dc = append(dc, v1.UserWithNum{
+			User: first,
+			Num:  item.Num,
+		})
+	}
+	return dc, nil
+}
+
+func (s *userService) OnLearningErNum() (int64, error) {
+	return s.userRepo.LearningToDayNum()
 }

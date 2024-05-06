@@ -1,5 +1,7 @@
 package v1
 
+import "github.com/peifengll/SpaceRepetition/internal/model"
+
 type RegisterRequest struct {
 	Email    string `json:"email" binding:"required,email" example:"1234@gmail.com"`
 	Password string `json:"password" binding:"required" example:"123456"`
@@ -38,4 +40,14 @@ type UserUpdateReq struct {
 	MaxInterval      int64   `gorm:"column:max_interval;type:int;comment:最大复习间隔，超过这个就算复习完成（推荐365） 默认365" json:"maxInterval"`                  // 最大复习间隔，超过这个就算复习完成（推荐365） 默认365
 	Weights          string  `gorm:"column:weights;type:varchar(80);comment:复习计算需要的参数" json:"weights"`                                        // 复习计算需要的参数
 	RequestRetention float32 `gorm:"column:request_retention;type:float;comment:想要下次见到一张卡片时，回忆起的概率（推荐70%~90%,默认90%）" json:"requestRetention"` // 想要下次见到一张卡片时，回忆起的概率（推荐70%~90%,默认90%）
+}
+
+type CalDeckNum struct {
+	UserId string `gorm:"column:user_id"`
+	Num    int64  `gorm:"column:num"`
+}
+
+type UserWithNum struct {
+	*model.User
+	Num int64
 }

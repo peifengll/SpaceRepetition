@@ -60,7 +60,7 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	adminRepository := repository.NewAdminRepository(repositoryRepository)
 	adminService := service.NewAdminService(serviceService, adminRepository)
 	adminHandler := handler.NewAdminHandler(handlerHandler, adminService)
-	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, adminHandler, announcementsHandler)
+	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, adminHandler, announcementsHandler, userHandler)
 	job := server.NewJob(logger)
 	taskManager := etask.NewTaskManager(client, recordService)
 	cleaner := server.NewCleaner(client, queryQuery)

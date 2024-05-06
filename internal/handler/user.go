@@ -127,3 +127,21 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 
 	v1.HandleSuccess(ctx, nil)
 }
+
+func (h *UserHandler) Statics(ctx *gin.Context) {
+	// 获取这个系统的一些情况，有哪些
+	infos, err := h.userService.GetTenUserInfos()
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, err)
+		return
+	}
+	num, err := h.userService.OnLearningErNum()
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, err)
+		return
+	}
+	v1.HandleSuccess(ctx, map[string]any{
+		"users":      infos,
+		"online_num": num,
+	})
+}

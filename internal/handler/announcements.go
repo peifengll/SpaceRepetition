@@ -5,7 +5,6 @@ import (
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/service"
 	"net/http"
-	"strconv"
 )
 
 type AnnouncementsHandler struct {
@@ -33,13 +32,16 @@ func (h *AnnouncementsHandler) AddAnnouncement(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
-	id, err := strconv.Atoi(GetUserIdFromCtx(ctx))
-	if err != nil {
-		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
-		return
+	//id, err := strconv.Atoi(GetUserIdFromCtx(ctx))
+	//if err != nil {
+	//	v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+	//	return
+	//}
+	//req.AdminID = int64(id)
+	if req.AdminID == 0 {
+		req.AdminID = 2
 	}
-	req.AdminID = int64(id)
-	err = h.announcementsService.AddAnnouncement(ctx, &req)
+	err := h.announcementsService.AddAnnouncement(ctx, &req)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
