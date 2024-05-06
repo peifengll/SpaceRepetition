@@ -122,6 +122,8 @@ func (r *TaskManager) AddTask(tsk v1.ExportTask) (bool, error) {
 			UserID:        tsk.UserId,
 			DataStartTime: tsk.Start,
 			DataEndTime:   tsk.End,
+			State:         1, // 等待中
+			ExportDate:    time.Now(),
 		}
 		err := r.record.CreateExportInfo(info)
 		if err != nil {

@@ -25,3 +25,7 @@ type ExportTask struct {
 	UserId   string
 	ExportId int64 // 如果创建成功的话
 }
+
+type ExportFileDownloadReq struct {
+	FilePath string `json:"file_path"`
+}

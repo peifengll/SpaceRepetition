@@ -63,7 +63,8 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	serverAdmin := server.NewHTTPServerAdmin(logger, viperViper, jwtJWT, adminHandler, announcementsHandler)
 	job := server.NewJob(logger)
 	taskManager := etask.NewTaskManager(client, recordService)
-	appApp := newApp(serverFont, serverAdmin, job, taskManager)
+	cleaner := server.NewCleaner(client, queryQuery)
+	appApp := newApp(serverFont, serverAdmin, job, taskManager, cleaner)
 	return appApp, func() {
 	}, nil
 }
@@ -78,9 +79,9 @@ var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service
 
 var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewFloderHandler, handler.NewDeckHandler, handler.NewKnowledgeHandler, handler.NewRecordHandler, handler.NewSectionHandler, handler.NewAdminHandler, handler.NewAnnouncementsHandler)
 
-var serverSet = wire.NewSet(server.NewHTTPServerFont, server.NewHTTPServerAdmin, server.NewJob, server.NewTask, etask.NewTaskManager)
+var serverSet = wire.NewSet(server.NewHTTPServerFont, server.NewHTTPServerAdmin, server.NewJob, server.NewTask, etask.NewTaskManager, server.NewCleaner)
 
 // build App
-func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job, tm *etask.TaskManager) *app.App {
-	return app.NewApp(app.WithServer(httpServer, httpServer2, job, tm), app.WithName("demo-server"))
+func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job, tm *etask.TaskManager, cl *server.Cleaner) *app.App {
+	return app.NewApp(app.WithServer(httpServer, httpServer2, job, tm, cl), app.WithName("space-repeat"))
 }

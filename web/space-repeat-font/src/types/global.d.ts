@@ -1,4 +1,4 @@
-// src\types\global.d.ts
+// src\types\global_.d.ts
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 declare module 'vue' {

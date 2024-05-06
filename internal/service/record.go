@@ -2,15 +2,17 @@ package service
 
 import (
 	"fmt"
+	"github.com/duke-git/lancet/v2/fileutil"
 	"github.com/gocarina/gocsv"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
-	"github.com/peifengll/SpaceRepetition/internal/global"
+	"github.com/peifengll/SpaceRepetition/internal/global_"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -19,6 +21,8 @@ type RecordService interface {
 	ExportInfoRecord(ran *v1.ExportRevlogCsvReq, userid string) (bool, error)
 	ExportInfoRecordOp(data v1.ExportTask) (bool, error)
 	CreateExportInfo(info *model.ExportInfo) error
+	GetExportInfos(userid string) ([]*model.ExportInfo, error)
+	AfterTrainData(traindatapath string, epid int) error
 }
 
 func NewRecordService(que *query.Query, service *Service, recordRepository repository.RecordRepository) RecordService {
@@ -56,7 +60,7 @@ func (s *recordService) ExportInfoRecord(ran *v1.ExportRevlogCsvReq, userid stri
 	// 拿userid 去取一个path
 
 	nowTime := strconv.FormatInt(time.Now().Unix(), 10)
-	filePath := global.ExportPrefix + "/" + userid + "/" + nowTime + ".csv"
+	filePath := global_.ExportPrefix + "/" + userid + "/" + nowTime + ".csv"
 	// 检查路径是否已经存在，如果不存在则创建所有必要的中间目录
 	if err = os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		fmt.Println("创建目录失败：", err)
@@ -86,7 +90,7 @@ func (s *recordService) ExportInfoRecordOp(data v1.ExportTask) (bool, error) {
 	}
 	// 拿userid 去取一个path
 	nowTime := strconv.FormatInt(time.Now().Unix(), 10)
-	filePath := global.ExportPrefix + "/" + data.UserId + "/" + nowTime + ".csv"
+	filePath := global_.ExportPrefix + "/" + data.UserId + "/" + nowTime + ".csv"
 	// 检查路径是否已经存在，如果不存在则创建所有必要的中间目录
 	if err = os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		fmt.Println("创建目录失败：", err)
@@ -112,4 +116,29 @@ func (s *recordService) ExportInfoRecordOp(data v1.ExportTask) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (s *recordService) GetExportInfos(userid string) ([]*model.ExportInfo, error) {
+	find, err := s.query.ExportInfo.Where(s.query.ExportInfo.UserID.Eq(userid)).Find()
+	if err != nil {
+		return nil, err
+	}
+	return find, nil
+}
+
+func (s *recordService) AfterTrainData(traindatapath string, epid int) error {
+	traindatapath = strings.ReplaceAll(traindatapath, ".csv", "_csv")
+	zippath := traindatapath + ".zip"
+	err := fileutil.Zip(traindatapath, zippath)
+	if err != nil {
+		return err
+	}
+	_, err = s.query.ExportInfo.Where(s.query.ExportInfo.ID.Eq(int64(epid))).Updates(map[string]any{
+		"train_data_path": zippath,
+		"state":           0,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

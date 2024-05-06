@@ -21,6 +21,7 @@ type KnowledgeService interface {
 	GetAllReview(id string) ([]v1.DeckCardReviewResp, error)
 	CheckReview(id int64) (bool, error)
 	ReviewOp(t *v1.CardReviewOptReq, userid string) (int64, error)
+	GetReviewStatics(userId string) ([]*model.DayReviewStatistic, error)
 }
 
 func NewKnowledgeService(que *query.Query, service *Service, knowledgeRepository repository.KnowledgeRepository) KnowledgeService {
@@ -237,7 +238,6 @@ func (s *knowledgeService) GetAllReview(id string) ([]v1.DeckCardReviewResp, err
 		return make([]v1.DeckCardReviewResp, 0), nil
 	}
 	return reviews, err
-
 }
 
 // 进行一次复习计算，算出时间间隔，并更新到数据库
@@ -302,6 +302,10 @@ func (s *knowledgeService) ReviewOp(t *v1.CardReviewOptReq, userid string) (int6
 	if err != nil {
 		return 0, err
 	}
+	err = s.knowledgeRepository.AddRecordToRedis(userid, t.ID, t.Opt)
+	if err != nil {
+		return 0, err
+	}
 	if isToday(newRecord.Due) {
 		return newRecord.ID, nil
 	}
@@ -318,4 +322,12 @@ func isToday(t time.Time) bool {
 
 	// 比较日期部分是否相等
 	return year == currentYear && month == currentMonth && day == currentDay
+}
+
+func (s *knowledgeService) GetReviewStatics(userId string) ([]*model.DayReviewStatistic, error) {
+	finds, err := s.query.DayReviewStatistic.Where(s.query.DayReviewStatistic.UserID.Eq(userId)).Find()
+	if err != nil {
+		return nil, err
+	}
+	return finds, nil
 }

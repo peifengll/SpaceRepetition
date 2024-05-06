@@ -69,13 +69,14 @@ var serverSet = wire.NewSet(
 	server.NewJob,
 	server.NewTask,
 	etask.NewTaskManager,
+	server.NewCleaner,
 )
 
 // build App
-func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job, tm *etask.TaskManager) *app.App {
+func newApp(httpServer *http.ServerFont, httpServer2 *http.ServerAdmin, job *server.Job, tm *etask.TaskManager, cl *server.Cleaner) *app.App {
 	return app.NewApp(
-		app.WithServer(httpServer, httpServer2, job, tm),
-		app.WithName("demo-server"),
+		app.WithServer(httpServer, httpServer2, job, tm, cl),
+		app.WithName("space-repeat"),
 	)
 }
 

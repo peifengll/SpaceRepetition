@@ -1,14 +1,18 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
+	"github.com/peifengll/SpaceRepetition/internal/global_"
 	"github.com/peifengll/SpaceRepetition/internal/model"
+	"github.com/peifengll/SpaceRepetition/pkg/helper/fsrs"
 )
 
 type KnowledgeRepository interface {
 	FirstById(id int64) (*model.Knowledge, error)
 	GetAllReviewCard(userid string) ([]v1.DeckCardReviewResp, error)
+	AddRecordToRedis(userid string, cardId int64, rate fsrs.Rating) error
 }
 
 func NewKnowledgeRepository(repository *Repository) KnowledgeRepository {
@@ -118,4 +122,29 @@ func (r *knowledgeRepository) GetAllReviewCard(userid string) ([]v1.DeckCardRevi
 	fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 	return reviews, nil
+}
+
+func (r *knowledgeRepository) AddRecordToRedis(userid string, cardId int64, rate fsrs.Rating) error {
+
+	ctx := context.Background()
+	// 加入复习用户
+	err := r.rdb.SAdd(ctx, global_.GetReviewersTodayKey(global_.Schedule), userid).Err()
+	if err != nil {
+		return err
+	}
+	// 当前用户的复习卡片数
+	err = r.rdb.SAdd(
+		ctx,
+		global_.GetReviewCardsSetKey(userid, global_.Schedule),
+		cardId,
+	).Err()
+	if err != nil {
+		return err
+	}
+	// 复习操作记录
+	err = r.rdb.HIncrBy(ctx, global_.GetReviewOpNumberKey(userid, global_.Schedule), rate.String(), 1).Err()
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/peifengll/SpaceRepetition/internal/global"
+	"github.com/peifengll/SpaceRepetition/internal/global_"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"strconv"
 )
@@ -40,15 +40,15 @@ func (r *announcementsRepository) Create(ctx context.Context, ann *model.Announc
 	if err != nil {
 		return err
 	}
-	err = r.rdb.RPush(ctx, global.GetAnnouncementToReadKey(), ann.ID).Err()
+	err = r.rdb.RPush(ctx, global_.GetAnnouncementToReadKey(), ann.ID).Err()
 	if err != nil {
 		return err
 	}
-	num, err := r.rdb.LLen(ctx, global.GetAnnouncementToReadKey()).Result()
+	num, err := r.rdb.LLen(ctx, global_.GetAnnouncementToReadKey()).Result()
 	if err != nil {
 		return err
 	}
-	err = r.rdb.LPopCount(ctx, global.GetAnnouncementToReadKey(), max(int(num)-10, 0)).Err()
+	err = r.rdb.LPopCount(ctx, global_.GetAnnouncementToReadKey(), max(int(num)-10, 0)).Err()
 	return err
 }
 
@@ -78,7 +78,7 @@ func (r *announcementsRepository) GetAnnouncementByIds(ctx context.Context, aids
 
 // 获取这几天还要查看的公告的id
 func (r *announcementsRepository) GetAnnouncementIds(ctx context.Context) ([]int64, error) {
-	result, err := r.rdb.LRange(ctx, global.GetAnnouncementToReadKey(), 0, -1).Result()
+	result, err := r.rdb.LRange(ctx, global_.GetAnnouncementToReadKey(), 0, -1).Result()
 	if err != nil {
 		return nil, err
 	}

@@ -62,6 +62,7 @@ func NewHTTPServerFont(
 		{
 			noAuthRouter.POST("/register", userHandler.Register)
 			noAuthRouter.POST("/login", userHandler.Login)
+			noAuthRouter.GET("/file", fileServer)
 		}
 		// Non-strict permission routing group
 		noStrictAuthRouter := v1.Group("/").Use(middleware.StrictAuth(jwt, logger))
@@ -106,7 +107,11 @@ func NewHTTPServerFont(
 			decks.PUT("/card/toreview", knowledgeHandler.ChooseToReview)
 
 			// 复习数据导出功能
-			decks.GET("/reviewinfo/export", recordHandler.ExportReviewInfo)
+			decks.POST("/reviewinfo/export", recordHandler.ExportReviewInfo)
+			decks.GET("/exportinfos", recordHandler.GetExportInfos)
+			decks.POST("/exportfile", recordHandler.GetRevlogCsvFile)
+			decks.GET("/review/train", recordHandler.Train)
+
 		}
 
 		review := v1.Group("/review").Use(middleware.StrictAuth(jwt, logger))
@@ -117,6 +122,7 @@ func NewHTTPServerFont(
 			review.PUT("/option", knowledgeHandler.ReviewOpt)
 			//取消一张卡片的复习调度
 			review.PUT("/card/cancel")
+			review.GET("/data", knowledgeHandler.GetReviewStatics)
 
 		}
 
@@ -124,7 +130,12 @@ func NewHTTPServerFont(
 
 	return s
 }
-
+func fileServer(c *gin.Context) {
+	pa := c.Query("filepath")
+	//path := "D:\\work\\code\\go\\tests\\v2\\tempconv.zip"
+	//fileName := path
+	c.File(pa) // 直接c.file 就可以把文件加返回
+}
 func NewHTTPServerAdmin(
 	logger *log.Logger,
 	conf *viper.Viper,

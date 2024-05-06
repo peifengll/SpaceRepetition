@@ -123,6 +123,7 @@ const toHomeIndex = () => {
 
 onBeforeMount(() => {
   console.log("组件挂载前");
+ 
 });
 
 import { reactive } from 'vue'
@@ -167,6 +168,25 @@ const toExportInfoReq=()=>{
   var timestamp1 = date1.getTime();
   var timestamp2 = date2.getTime();
   console.log("转化后",timestamp1,timestamp2)
+  request.post("v1/decks/reviewinfo/export", {
+    date1:timestamp1 ,
+    date2: timestamp2 ,
+  }).then(res => {
+    console.log(res)
+    if (res.status == 200) {
+      ElMessage({
+        showClose: true,
+        message: '加入导出任务成功',
+        type: 'success',
+      })
+    }
+  }).catch(error => {
+    console.log(error)
+    ElMessage.error('操作失败'+error)
+
+  })
+
+
   dialogFormVisibleExport.value=false;
 }
 

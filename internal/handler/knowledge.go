@@ -184,3 +184,18 @@ func (h *KnowledgeHandler) ReviewOpt(ctx *gin.Context) {
 	}
 	v1.HandleSuccess(ctx, map[string]any{"finished": recordId == 0, "rid": recordId})
 }
+
+func (h *KnowledgeHandler) GetReviewStatics(ctx *gin.Context) {
+	userId := GetUserIdFromCtx(ctx)
+	if userId == "" {
+		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
+		return
+	}
+
+	infos, err := h.knowledgeService.GetReviewStatics(userId)
+	if err != nil {
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
+		return
+	}
+	v1.HandleSuccess(ctx, infos)
+}
