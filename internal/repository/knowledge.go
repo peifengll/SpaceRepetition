@@ -6,13 +6,16 @@ import (
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
 	"github.com/peifengll/SpaceRepetition/internal/global_"
 	"github.com/peifengll/SpaceRepetition/internal/model"
+	"github.com/peifengll/SpaceRepetition/pkg/helper/convert"
 	"github.com/peifengll/SpaceRepetition/pkg/helper/fsrs"
+	"strconv"
 )
 
 type KnowledgeRepository interface {
 	FirstById(id int64) (*model.Knowledge, error)
 	GetAllReviewCard(userid string) ([]v1.DeckCardReviewResp, error)
 	AddRecordToRedis(userid string, cardId int64, rate fsrs.Rating) error
+	LoadParms(userid string) (*fsrs.Parameters, bool, error)
 }
 
 func NewKnowledgeRepository(repository *Repository) KnowledgeRepository {
@@ -147,4 +150,54 @@ func (r *knowledgeRepository) AddRecordToRedis(userid string, cardId int64, rate
 		return err
 	}
 	return nil
+}
+
+func (r *knowledgeRepository) LoadParms(userid string) (*fsrs.Parameters, bool, error) {
+	// 获取参数，要是没得就用default是
+	ctx := context.Background()
+	flag := r.rdb.Exists(ctx, global_.GetFsrsParmsKey(userid)).Val()
+	parms := fsrs.Parameters{
+		RequestRetention: 0,
+		MaximumInterval:  0,
+		W:                fsrs.Weights{},
+	}
+	if flag == 0 {
+		var po model.User
+		err := r.db.Model(&model.User{}).Where("user_id = ?", userid).
+			Select("max_interval", "weights", "request_retention").
+			First(&po).Error
+		if err != nil {
+			return nil, false, err
+		}
+		r.rdb.HSet(ctx, global_.GetFsrsParmsKey(userid),
+			"max_interval", po.MaxInterval,
+			"weights", po.Weights,
+			"request_retention", po.RequestRetention)
+	}
+	// 存在 ，就去拿
+	dic := r.rdb.HGetAll(ctx, global_.GetFsrsParmsKey(userid)).Val()
+	float1, err := strconv.ParseFloat(dic["max_interval"], 10)
+	if err != nil {
+		return nil, false, err
+	}
+	parms.MaximumInterval = float1
+	parms.RequestRetention, err = strconv.ParseFloat(dic["request_retention"], 10)
+	if err != nil {
+		return nil, false, err
+	}
+	if dic["weights"] == "" {
+		return &parms, false, err
+	} else {
+		wes, err := convert.ParseStringToFloatSlice(dic["weights"])
+		if err != nil {
+			return nil, false, err
+		}
+		if len(wes) < 17 {
+			return &parms, false, err
+		}
+		for ii := 0; ii < 17; ii++ {
+			parms.W[ii] = wes[ii]
+		}
+		return &parms, true, nil
+	}
 }

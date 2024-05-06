@@ -30,7 +30,7 @@ func TrainDataRequest(filepath string) (bool, error) {
 	// 实例化一个client对象，传入参数conn
 	c := pb.NewTrainerClient(conn)
 
-	// 初始化上下文，设置请求超时时间为1秒
+	// 初始化上下文，设置请求超时时间为1min
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*1)
 	//延迟关闭请求会话
 	defer cancel()

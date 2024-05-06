@@ -116,6 +116,7 @@ func (h *RecordHandler) Train(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, err)
 		return
 	}
+	//
 	ok, err := train_client.TrainDataRequest(pa)
 	// 把pa的.csv 换掉，换成_csv ，然后进行压缩 ，保留位置
 	log.Println(ok)

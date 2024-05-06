@@ -7,6 +7,7 @@ import (
 	"github.com/peifengll/SpaceRepetition/internal/query"
 	"github.com/peifengll/SpaceRepetition/internal/repository"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"time"
 )
 
@@ -133,6 +134,13 @@ func (s *userService) UpdateUserInfos(ctx context.Context, userId string, req *v
 	}
 	if req.RequestRetention != 0 {
 		user.RequestRetention = req.RequestRetention
+	}
+	if req.Weights != "" || req.RequestRetention != 0 || req.MaxInterval != 0 {
+		err = s.userRepo.DelFsrsParmKey(userId)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	}
 	if err = s.userRepo.Update(ctx, user); err != nil {
 		return err

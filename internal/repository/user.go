@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	v1 "github.com/peifengll/SpaceRepetition/api/v1"
+	"github.com/peifengll/SpaceRepetition/internal/global_"
 	"github.com/peifengll/SpaceRepetition/internal/model"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ type UserRepository interface {
 	Update(ctx context.Context, user *model.User) error
 	GetByID(ctx context.Context, id string) (*model.User, error)
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
+	DelFsrsParmKey(userid string) error
 }
 
 func NewUserRepository(r *Repository) UserRepository {
@@ -59,4 +61,8 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*model.U
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *userRepository) DelFsrsParmKey(userid string) error {
+	return r.rdb.Del(context.Background(), global_.GetFsrsParmsKey(userid)).Err()
 }

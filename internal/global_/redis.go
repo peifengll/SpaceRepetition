@@ -28,6 +28,10 @@ func GetReviewOpNumberKey(userid, sc string) string {
 	return pubName + "_" + userid + "_" + sc + "_rate"
 }
 
+func GetFsrsParmsKey(userid string) string {
+	return pubName + userid + "_fsrs"
+}
+
 // 复习记录相关
 func GetReviewOpNumKey(userid string, i fsrs.Rating) string {
 	suffix := ""

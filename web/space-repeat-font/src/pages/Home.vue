@@ -50,6 +50,9 @@ const annElessage=(index:number,maxl:number,data:any)=>{
 const getAnns = () => {
   request.get("v1/pushanns", {}).then((res) => {
     let data = res.data.data
+    if(data==null){
+      return 
+    }
     annElessage(0,data.length,data)
   })
 }

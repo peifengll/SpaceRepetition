@@ -1,97 +1,97 @@
 <template>
-    <div class="notice-list">
-      <h2>公告列表</h2>
-      <ul class="notice-items">
-        <li v-for="notice in paginatedNotices" :key="notice.id" class="notice-item">
-          {{ notice.title }}
-        </li>
-      </ul>
+  <el-table :data="tableData" style="width: 100%">
+    <el-table-column prop="publishTime" label="Date" width="180" />
+    <el-table-column prop="title" label="标题" width="180" />
+    <el-table-column prop="content" label="内容" />
+    <el-table-column fixed="right" label="Operations" width="180" >
+      <template #default="scope">
+    
+        <el-button v-if="scope.row.revlogPath!='' "  link type="primary" @click="onRead(scope.row)" size="small">
+          确认
+        </el-button>
+       
+      </template>
+    </el-table-column>
+  </el-table>
+</template>
+
+<script lang="ts" setup>
+import {ref, onBeforeMount, onMounted} from 'vue'
+import request from "../utils/request.ts";
+onBeforeMount(() => {
+  getAnns()
   
-      <div class="pagination">
-        <button @click="prevPage" :disabled="currentPage === 1" class="pagination-btn">上一页</button>
-        <span class="current-page">{{ currentPage }}</span>
-        <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-btn">下一页</button>
-      </div>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, computed } from 'vue';
-  
-  interface Notice {
-    id: number;
-    title: string;
-  }
-  
-  const notices: Notice[] = [
-    { id: 1, title: '公告 1' },
-    { id: 2, title: '公告 2' },
-    { id: 3, title: '公告 3' },
-    { id: 4, title: '公告 4' },
-    { id: 5, title: '公告 5' },
-    { id: 6, title: '公告 6' },
-    { id: 7, title: '公告 7' },
-    // 添加更多公告
-  ];
-  
-  const pageSize = 5;
-  const currentPage = ref(1);
-  
-  const totalPages = computed(() => Math.ceil(notices.length / pageSize));
-  
-  const paginatedNotices = computed(() => {
-    const startIndex = (currentPage.value - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    return notices.slice(startIndex, endIndex);
-  });
-  
-  const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value++;
+})
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // 月份从0开始计数，所以加1
+  const day = date.getDate();
+  return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+}
+const getAnns = () => {
+  request.get("v1/pushanns", {}).then((res) => {
+    let data = res.data.data
+    if(data==null){
+      tableData.value=data
+      return 
     }
-  };
-  
-  const prevPage = () => {
-    if (currentPage.value > 1) {
-      currentPage.value--;
+    for (let i=0;i<data.length;i++){
+      data[i].publishTime  =formatDate( data[i].publishTime )
     }
-  };
-  </script>
-  
-  <style scoped>
-  .notice-list {
-    margin: 20px auto;
-    width: 80%;
+    tableData.value=data
+    // annElessage(0,data.length,data)
+  })
+}
+const onRead =(row:any)=>{
+
+  console.log(row)
+  request.post("/v1/readann", {
+    id:row.id,
+  }).then(res => {
+    console.log(res)
+    getAnns()
+  }).catch(error => {
+
+  })
+
+}
+const tableData = ref( [
+  {
+    "id": 1,
+    "admin_id": 2,
+    "title": "测试公告",
+    "content": "这只是一条测试",
+    "publish_time": "2024-04-16 21:24:01"
+  },
+  {
+    "id": 2,
+    "admin_id": 2,
+    "title": "测试公告2",
+    "content": "这也只是一条测试",
+    "publish_time": "2024-04-16 21:30:08"
+  },
+  {
+    "id": 4,
+    "admin_id": 2,
+    "title": "测试公告2",
+    "content": "这也只是一条测试",
+    "publish_time": "2024-05-03 16:17:06"
+  },
+  {
+    "id": 5,
+    "admin_id": 2,
+    "title": "测试公告2",
+    "content": "这也只是一条测试",
+    "publish_time": "2024-05-03 16:17:57"
+  },
+  {
+    "id": 6,
+    "admin_id": 2,
+    "title": "测试公告44",
+    "content": "这也只是一条测试俄日一",
+    "publish_time": "2024-05-03 18:14:36"
   }
-  
-  .notice-items {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .notice-item {
-    background-color: #f0f0f0;
-    padding: 10px;
-    margin-bottom: 5px;
-  }
-  
-  .pagination {
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  .pagination-btn {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .current-page {
-    font-weight: bold;
-  }
-  </style>
-  
+])
+
+</script>

@@ -30,6 +30,8 @@
         <el-menu-item index="2-4-3">item three</el-menu-item>
       </el-sub-menu> -->
       <el-menu-item index="2-5" @click="toReviewStatistics">复习情况展示</el-menu-item>
+      <el-menu-item index="2-5" @click="toAnnPage">公告</el-menu-item>
+      
     </el-sub-menu>
   </el-menu>
 
@@ -87,7 +89,7 @@
       <el-input  v-model.number="form.interval" oninput="value=value.replace(/[^\d.]/g,'')" />
     </el-form-item>
     <el-form-item label="回忆成功的概率" prop="request_retention">
-      <el-input  v-model.number="form.request_retention" oninput="value=value.replace(/[^\d.]/g,'')" />
+      <el-input  v-model.number="form.request_retention" oninput="value=value.replace(/[^\d.]/g, '')" />
     </el-form-item>
     
     <el-form-item label="复习参数">
@@ -231,7 +233,7 @@ const loginOut = () => {
   const store = useStore();
   store.token=""
   // location.reload()
-  window.location.href=SelfUrl
+  window.location.href=SelfUrl+'login'
 }
 
 
@@ -266,6 +268,11 @@ const openConfirmLoginOut = () => {
 const toReviewPage = () => {
   // location.reload()
   window.location.href=SelfUrl+"review"
+}
+
+const toAnnPage = () => {
+  // location.reload()
+  window.location.href=SelfUrl+"announcement"
 }
 
 

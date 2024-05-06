@@ -53,7 +53,7 @@ const tableData = ref([
     "state": 0
   }
 ])
-onBeforeMount(() => {
+const getAlldata=()=>{
   request.get("v1/decks/exportinfos", {}).then((res: any) => {
     let data = res.data.data
     for(let i=0;i<data.length;i++){
@@ -73,7 +73,10 @@ onBeforeMount(() => {
     tableData.value = data
     console.log(data)
   })
-
+}
+onBeforeMount(() => {
+ 
+  getAlldata()
 });
 
 
@@ -84,11 +87,16 @@ const  download=(path:String)=>{
 
 }
 
-const  trainData=(path:String,epid:Number)=>{
-  
-  request.get("v1/decks/review/train?filepath="+path+"&epid=" +epid, {}).then(res=>{
+const trainData = (path: String, epid: Number) => {
+
+  request.get("v1/decks/review/train?filepath=" + path + "&epid=" + epid, {}).then(res => {
     console.log("训练完毕")
+    ElMessage({
+      type: 'success',
+      message: `训练完成，可下载`,
+    })
   })
+  getAlldata()
 
 }
 
